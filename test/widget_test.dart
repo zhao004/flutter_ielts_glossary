@@ -233,6 +233,18 @@ void main() {
     expect(find.text('学术的'), findsWidgets);
     expect(find.text('释义'), findsOneWidget);
     expect(find.text('学术的'), findsOneWidget);
+    expect(find.text('/ˌækəˈdemɪk/'), findsOneWidget);
+    expect(find.text('US'), findsOneWidget);
+    expect(find.text('UK'), findsOneWidget);
+    expect(find.text('评测'), findsOneWidget);
+    for (final key in [
+      const ValueKey('word-details-audio-us'),
+      const ValueKey('word-details-audio-uk'),
+      const ValueKey('word-details-assessment'),
+    ]) {
+      final button = tester.widget<TextButton>(find.byKey(key));
+      expect(button.style?.shape?.resolve({}), isA<StadiumBorder>());
+    }
     await tester.drag(find.byType(ListView), const Offset(0, -600));
     await tester.pumpAndSettle();
     expect(find.text('例句'), findsOneWidget);
@@ -584,7 +596,7 @@ void main() {
     await tester.tap(find.text('academic'));
     await tester.pumpAndSettle();
     expect(find.text('academic'), findsWidgets);
-    await tester.tap(find.byTooltip('发音练习'));
+    await tester.tap(find.byTooltip('进入发音评测'));
     await tester.pumpAndSettle();
     expect(find.text('尚未配置第三方评测'), findsOneWidget);
   });

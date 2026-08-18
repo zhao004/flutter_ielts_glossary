@@ -135,24 +135,29 @@ final class _DetailsSheet extends StatelessWidget {
         final sheetHeight = desiredHeight.clamp(220.0, maxHeight - 48);
         return Align(
           alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            height: sheetHeight,
-            width: double.infinity,
-            child: Material(
-              color: Theme.of(context).appCardSurface,
-              elevation: 8,
-              shadowColor: Theme.of(
-                context,
-              ).colorScheme.shadow.withValues(alpha: 0.2),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadii.sheet),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Column(
-                children: [
-                  const _SheetHandle(),
-                  Expanded(child: _buildContent(context)),
-                ],
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppLayout.maxContentWidth,
+            ),
+            child: SizedBox(
+              height: sheetHeight,
+              width: double.infinity,
+              child: Material(
+                color: Theme.of(context).appCardSurface,
+                elevation: 8,
+                shadowColor: Theme.of(
+                  context,
+                ).colorScheme.shadow.withValues(alpha: 0.2),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppRadii.sheet),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: [
+                    const _SheetHandle(),
+                    Expanded(child: _buildContent(context)),
+                  ],
+                ),
               ),
             ),
           ),
@@ -228,7 +233,7 @@ final class _LoadedDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = state.details!;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
       children: [
         Row(
           children: [
@@ -270,31 +275,46 @@ final class _LoadedDetails extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 5),
-        Row(
+        const SizedBox(height: 6),
+        _PhoneticDisplay(
+          phoneticUs: details.phoneticUs,
+          phoneticUk: details.phoneticUk,
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            Expanded(
-              child: _AudioAction(
-                label: 'UK',
-                phonetic: details.phoneticUk,
-                playing:
-                    state.audioPhase == WordDetailsAudioPhase.playing &&
-                    state.pronunciationAccent == PronunciationAccent.uk,
-                onTap: () => _toggleAudio(PronunciationAccent.uk),
-              ),
+            _PronunciationAction(
+              buttonKey: const ValueKey('word-details-audio-us'),
+              label: 'US',
+              tooltip: _isPlaying(PronunciationAccent.us)
+                  ? '停止 US 发音'
+                  : '播放 US 发音',
+              icon: _isPlaying(PronunciationAccent.us)
+                  ? Icons.stop_rounded
+                  : Icons.volume_up_outlined,
+              active: _isPlaying(PronunciationAccent.us),
+              onPressed: () => _toggleAudio(PronunciationAccent.us),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _AudioAction(
-                label: 'US',
-                phonetic: details.phoneticUs,
-                playing:
-                    state.audioPhase == WordDetailsAudioPhase.playing &&
-                    state.pronunciationAccent == PronunciationAccent.us,
-                onTap: () => _toggleAudio(PronunciationAccent.us),
-              ),
+            _PronunciationAction(
+              buttonKey: const ValueKey('word-details-audio-uk'),
+              label: 'UK',
+              tooltip: _isPlaying(PronunciationAccent.uk)
+                  ? '停止 UK 发音'
+                  : '播放 UK 发音',
+              icon: _isPlaying(PronunciationAccent.uk)
+                  ? Icons.stop_rounded
+                  : Icons.volume_up_outlined,
+              active: _isPlaying(PronunciationAccent.uk),
+              onPressed: () => _toggleAudio(PronunciationAccent.uk),
             ),
-            IconButton(
+            _PronunciationAction(
+              buttonKey: const ValueKey('word-details-assessment'),
+              label: '评测',
+              tooltip: '进入发音评测',
+              icon: Icons.mic_none_rounded,
+              emphasized: true,
               onPressed: () => Get.toNamed(
                 AppRouteNames.pronunciation,
                 arguments: {
@@ -306,15 +326,16 @@ final class _LoadedDetails extends StatelessWidget {
                   'translation': details.translationZh,
                 },
               ),
-              tooltip: '发音练习',
-              icon: const Icon(Icons.mic_none_rounded, size: 21),
             ),
           ],
         ),
         if (state.audioErrorCode != null)
-          Text(
-            _audioMessage(state.audioErrorCode!),
-            style: TextStyle(color: Theme.of(context).appError, fontSize: 11),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              _audioMessage(state.audioErrorCode!),
+              style: TextStyle(color: Theme.of(context).appError, fontSize: 11),
+            ),
           ),
         const SizedBox(height: 18),
         _DefinitionPanel(details: details),
@@ -343,55 +364,139 @@ final class _LoadedDetails extends StatelessWidget {
   }
 
   Future<void> _toggleAudio(PronunciationAccent accent) {
-    final playing =
-        state.audioPhase == WordDetailsAudioPhase.playing &&
-        state.pronunciationAccent == accent;
-    return playing ? onStop() : onPlay(accent: accent);
+    return _isPlaying(accent) ? onStop() : onPlay(accent: accent);
   }
+
+  bool _isPlaying(PronunciationAccent accent) =>
+      state.audioPhase == WordDetailsAudioPhase.playing &&
+      state.pronunciationAccent == accent;
 }
 
-final class _AudioAction extends StatelessWidget {
-  const _AudioAction({
-    required this.label,
-    required this.phonetic,
-    required this.playing,
-    required this.onTap,
-  });
+final class _PhoneticDisplay extends StatelessWidget {
+  const _PhoneticDisplay({required this.phoneticUs, required this.phoneticUk});
 
-  final String label;
-  final String? phonetic;
-  final bool playing;
-  final VoidCallback onTap;
+  final String? phoneticUs;
+  final String? phoneticUk;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadii.medium),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            AppSvgIcon(
-              AppIconAssets.volume,
-              size: 18,
-              color: playing
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
+    final us = _normalizePhonetic(phoneticUs);
+    final uk = _normalizePhonetic(phoneticUk);
+    final textStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+      color: Theme.of(context).appTextSecondary,
+      fontWeight: FontWeight.w500,
+    );
+    if (us == null && uk == null) {
+      return Text('暂无音标', style: textStyle);
+    }
+    if (us == null || uk == null || us == uk) {
+      return Text('/${us ?? uk}/', style: textStyle);
+    }
+    return Wrap(
+      spacing: 16,
+      runSpacing: 4,
+      children: [
+        _AccentPhonetic(label: 'US', phonetic: us),
+        _AccentPhonetic(label: 'UK', phonetic: uk),
+      ],
+    );
+  }
+
+  String? _normalizePhonetic(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null || trimmed.isEmpty) {
+      return null;
+    }
+    final normalized =
+        trimmed.length > 1 && trimmed.startsWith('/') && trimmed.endsWith('/')
+        ? trimmed.substring(1, trimmed.length - 1).trim()
+        : trimmed;
+    return normalized.isEmpty ? null : normalized;
+  }
+}
+
+final class _AccentPhonetic extends StatelessWidget {
+  const _AccentPhonetic({required this.label, required this.phonetic});
+
+  final String label;
+  final String phonetic;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: '$label  ',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w700,
             ),
-            const SizedBox(width: 5),
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                phonetic == null ? '暂无音标' : '/$phonetic/',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
+          ),
+          TextSpan(
+            text: '/$phonetic/',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.appTextSecondary,
+              fontWeight: FontWeight.w500,
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _PronunciationAction extends StatelessWidget {
+  const _PronunciationAction({
+    required this.buttonKey,
+    required this.label,
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+    this.active = false,
+    this.emphasized = false,
+  });
+
+  final Key buttonKey;
+  final String label;
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback onPressed;
+  final bool active;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final highlighted = active || emphasized;
+    final foreground = highlighted
+        ? theme.colorScheme.primary
+        : theme.appTextSecondary;
+    final background = highlighted
+        ? theme.colorScheme.primaryContainer
+        : theme.appSubtleSurface;
+    final border = highlighted
+        ? theme.colorScheme.primary.withValues(alpha: 0.28)
+        : theme.appBorder;
+    return Tooltip(
+      message: tooltip,
+      child: TextButton.icon(
+        key: buttonKey,
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          minimumSize: const Size(0, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          foregroundColor: foreground,
+          backgroundColor: background,
+          side: BorderSide(color: border),
+          shape: const StadiumBorder(),
+          textStyle: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
+        icon: Icon(icon, size: 18),
+        label: Text(label),
       ),
     );
   }
