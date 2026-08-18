@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import '../../models/domain/app_settings_state.dart';
 import '../../models/domain/pronunciation_practice_run_state.dart';
 import '../../repositories/pronunciation_assessment_config_repository.dart';
 import '../../services/assessment/pronunciation_evaluator.dart';
@@ -31,10 +30,7 @@ final class PronunciationPracticeLogic extends GetxController {
   int _operationToken = 0;
 
   /// 加载第三方评测配置并检查录音权限；未配置服务时不请求录音。
-  Future<void> prepare({
-    required String expectedWord,
-    PronunciationAccent accent = PronunciationAccent.uk,
-  }) async {
+  Future<void> prepare({required String expectedWord}) async {
     final normalizedWord = expectedWord.trim();
     _validateWord(normalizedWord);
     if (_closed) {
@@ -45,7 +41,6 @@ final class PronunciationPracticeLogic extends GetxController {
       PronunciationPracticeRunState(
         phase: PronunciationPracticePhase.preparing,
         expectedWord: normalizedWord,
-        accent: accent,
         score: null,
         errorCode: null,
       ),
@@ -103,7 +98,7 @@ final class PronunciationPracticeLogic extends GetxController {
         _state.phase == PronunciationPracticePhase.idle) {
       return;
     }
-    await prepare(expectedWord: expectedWord, accent: _state.accent);
+    await prepare(expectedWord: expectedWord);
   }
 
   /// 开始一次仅供第三方评测使用的录音。
@@ -226,7 +221,6 @@ final class PronunciationPracticeLogic extends GetxController {
         PronunciationEvaluationRequest(
           referenceText: expectedWord,
           pcmBytes: audio.pcmBytes,
-          accent: _state.accent,
         ),
       );
       if (_isCurrent(operationToken)) {

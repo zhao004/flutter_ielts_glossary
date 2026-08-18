@@ -37,7 +37,10 @@ class TtsSynthesizerFactory {
           appKey: config.youdaoAppKey.trim(),
           appSecret: config.youdaoAppSecret.trim(),
         ),
-        voice: config.youdaoVoice.trim(),
+        usVoiceName: config.youdaoUsVoiceName.trim(),
+        ukVoiceName: config.youdaoUkVoiceName.trim(),
+        speed: config.speed,
+        volume: config.volume,
       ),
     };
   }

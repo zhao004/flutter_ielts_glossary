@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -52,6 +53,53 @@ void main() {
     expect(loaded.speed, 60);
     expect(loaded.volume, 55);
     expect(loaded.pitch, 40);
+  });
+
+  test('保存并恢复有道美式与英式 voiceName', () async {
+    const config = TtsConfig(
+      platform: TtsPlatform.youdao,
+      youdaoAppKey: 'app-key',
+      youdaoAppSecret: 'app-secret',
+      youdaoUsVoiceName: 'youmeimei',
+      youdaoUkVoiceName: 'youyingying',
+    );
+
+    await repository().save(config);
+    final loaded = await repository().load();
+
+    expect(loaded.youdaoUsVoiceName, 'youmeimei');
+    expect(loaded.youdaoUkVoiceName, 'youyingying');
+  });
+
+  test('读取旧版 voice 配置时迁移为官方双口音 voiceName', () async {
+    final file = File(
+      '${directory.path}/${LocalTtsConfigRepository.configFileName}',
+    );
+    await file.writeAsString(
+      jsonEncode({
+        'platform': 'youdao',
+        'xfyunAppId': '',
+        'xfyunApiKey': '',
+        'xfyunApiSecret': '',
+        'xfyunVoice': 'catherine',
+        'youdaoAppKey': 'app-key',
+        'youdaoAppSecret': 'app-secret',
+        'youdaoVoice': 'female',
+        'speed': 50,
+        'volume': 50,
+        'pitch': 50,
+      }),
+    );
+
+    final loaded = await repository().load();
+
+    expect(loaded.youdaoUsVoiceName, 'youmeimei');
+    expect(loaded.youdaoUkVoiceName, 'youyingying');
+    await repository().save(loaded);
+    final migrated = jsonDecode(await file.readAsString()) as Map;
+    expect(migrated, isNot(contains('youdaoVoice')));
+    expect(migrated['youdaoUsVoiceName'], 'youmeimei');
+    expect(migrated['youdaoUkVoiceName'], 'youyingying');
   });
 
   test('畸形 JSON 或超限字段抛出稳定异常', () async {

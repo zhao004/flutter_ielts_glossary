@@ -81,7 +81,8 @@ final class LocalTtsConfigRepository implements TtsConfigRepository {
       'xfyunVoice': config.xfyunVoice,
       'youdaoAppKey': config.youdaoAppKey,
       'youdaoAppSecret': config.youdaoAppSecret,
-      'youdaoVoice': config.youdaoVoice,
+      'youdaoUsVoiceName': config.youdaoUsVoiceName,
+      'youdaoUkVoiceName': config.youdaoUkVoiceName,
       'speed': config.speed,
       'volume': config.volume,
       'pitch': config.pitch,
@@ -98,7 +99,21 @@ final class LocalTtsConfigRepository implements TtsConfigRepository {
     if (decoded is! Map<String, Object?>) {
       throw const UnsupportedTtsConfigException('配置文件必须是 JSON 对象');
     }
-    const keys = {
+    const currentKeys = {
+      'platform',
+      'xfyunAppId',
+      'xfyunApiKey',
+      'xfyunApiSecret',
+      'xfyunVoice',
+      'youdaoAppKey',
+      'youdaoAppSecret',
+      'youdaoUsVoiceName',
+      'youdaoUkVoiceName',
+      'speed',
+      'volume',
+      'pitch',
+    };
+    const legacyKeys = {
       'platform',
       'xfyunAppId',
       'xfyunApiKey',
@@ -111,9 +126,43 @@ final class LocalTtsConfigRepository implements TtsConfigRepository {
       'volume',
       'pitch',
     };
-    if (decoded.keys.toSet().length != keys.length ||
-        !decoded.keys.toSet().containsAll(keys)) {
+    final actualKeys = decoded.keys.toSet();
+    final isCurrent =
+        actualKeys.length == currentKeys.length &&
+        actualKeys.containsAll(currentKeys);
+    final isLegacy =
+        actualKeys.length == legacyKeys.length &&
+        actualKeys.containsAll(legacyKeys);
+    if (!isCurrent && !isLegacy) {
       throw const UnsupportedTtsConfigException('配置文件字段集合不匹配协议');
+    }
+    final String youdaoUsVoiceName;
+    final String youdaoUkVoiceName;
+    if (isCurrent) {
+      youdaoUsVoiceName = _readText(
+        decoded,
+        'youdaoUsVoiceName',
+        max: maxVoiceLength,
+      );
+      youdaoUkVoiceName = _readText(
+        decoded,
+        'youdaoUkVoiceName',
+        max: maxVoiceLength,
+      );
+    } else {
+      final legacyVoice = _readText(
+        decoded,
+        'youdaoVoice',
+        max: maxVoiceLength,
+      ).trim();
+      // 旧版文档误用 female/male；迁移时替换为官方词典音色。
+      youdaoUsVoiceName =
+          legacyVoice.isEmpty ||
+              legacyVoice == 'female' ||
+              legacyVoice == 'male'
+          ? 'youmeimei'
+          : legacyVoice;
+      youdaoUkVoiceName = 'youyingying';
     }
     final config = TtsConfig(
       platform: _decodePlatform(decoded['platform']),
@@ -135,7 +184,8 @@ final class LocalTtsConfigRepository implements TtsConfigRepository {
         'youdaoAppSecret',
         max: maxCredentialLength,
       ),
-      youdaoVoice: _readText(decoded, 'youdaoVoice', max: maxVoiceLength),
+      youdaoUsVoiceName: youdaoUsVoiceName,
+      youdaoUkVoiceName: youdaoUkVoiceName,
       speed: _readInt(decoded, 'speed'),
       volume: _readInt(decoded, 'volume'),
       pitch: _readInt(decoded, 'pitch'),
@@ -180,7 +230,8 @@ final class LocalTtsConfigRepository implements TtsConfigRepository {
         config.xfyunVoice.length > maxVoiceLength ||
         config.youdaoAppKey.length > maxCredentialLength ||
         config.youdaoAppSecret.length > maxCredentialLength ||
-        config.youdaoVoice.length > maxVoiceLength ||
+        config.youdaoUsVoiceName.length > maxVoiceLength ||
+        config.youdaoUkVoiceName.length > maxVoiceLength ||
         config.speed < 0 ||
         config.speed > 100 ||
         config.volume < 0 ||

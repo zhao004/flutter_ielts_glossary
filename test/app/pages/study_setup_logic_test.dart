@@ -12,7 +12,7 @@ import 'package:flutter_ielts_glossary/app/pages/study/study_setup_logic.dart';
 import 'package:flutter_ielts_glossary/app/repositories/settings_repository.dart';
 
 void main() {
-  test('并发加载共享设置查询并初始化口音与自动播放偏好', () async {
+  test('并发加载共享设置查询且不继承旧发音偏好', () async {
     final gate = Completer<AppSettingsState>();
     final settingsRepository = _FakeSettingsRepository(
       loadActions: [() => gate.future],
@@ -30,8 +30,6 @@ void main() {
 
     expect(settingsRepository.loadCalls, 1);
     expect(logic.state.phase, StudySetupPhase.editing);
-    expect(logic.state.config?.pronunciationAccent, PronunciationAccent.us);
-    expect(logic.state.config?.autoPlayPronunciation, isTrue);
     expect(logic.state.config?.wordCount, StudyConfig.defaultWordCount);
   });
 
@@ -65,13 +63,9 @@ void main() {
 
     logic.selectFrequencyGroups(const {1, 3, 5});
     logic.setWordCount(30);
-    logic.setPronunciationAccent(PronunciationAccent.us);
-    logic.setAutoPlayPronunciation(true);
 
     expect(logic.state.config?.frequencyGroupIds, {1, 3, 5});
     expect(logic.state.config?.wordCount, 30);
-    expect(logic.state.config?.pronunciationAccent, PronunciationAccent.us);
-    expect(logic.state.config?.autoPlayPronunciation, isTrue);
     expect(settingsRepository.updateCalls, 0);
 
     final validConfig = logic.state.config;

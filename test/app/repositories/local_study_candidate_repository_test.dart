@@ -3,7 +3,6 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_ielts_glossary/app/database/content/content_database.dart';
-import 'package:flutter_ielts_glossary/app/models/domain/app_settings_state.dart';
 import 'package:flutter_ielts_glossary/app/models/domain/study_config.dart';
 import 'package:flutter_ielts_glossary/app/repositories/local_study_candidate_repository.dart';
 import 'package:flutter_ielts_glossary/app/services/question/question_random.dart';
@@ -25,12 +24,7 @@ void main() {
 
   test('候选 Repository 返回完整详情和真实例句', () async {
     final batch = await repository.loadCandidates(
-      StudyConfig(
-        frequencyGroupIds: const {1},
-        wordCount: 2,
-        pronunciationAccent: PronunciationAccent.us,
-        autoPlayPronunciation: true,
-      ),
+      StudyConfig(frequencyGroupIds: const {1}, wordCount: 2),
     );
 
     expect(batch.availableCount, 2);

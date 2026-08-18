@@ -14,6 +14,6 @@ extension PronunciationAssessmentPlatformLabels
   String get description => switch (this) {
     PronunciationAssessmentPlatform.off => '需配置第三方服务后才能进行发音评测',
     PronunciationAssessmentPlatform.xfyun => '讯飞语音评测（ISE），返回音素级评分',
-    PronunciationAssessmentPlatform.youdao => '有道语音评测，返回总分与流利度',
+    PronunciationAssessmentPlatform.youdao => '有道语音评测，返回完整度、流利度与准确度',
   };
 }

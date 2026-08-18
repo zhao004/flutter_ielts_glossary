@@ -37,15 +37,22 @@ void main() {
       ),
       isA<XfyunTtsSynthesizer>(),
     );
-    expect(
-      factory.create(
-        const TtsConfig(
-          platform: TtsPlatform.youdao,
-          youdaoAppKey: 'key',
-          youdaoAppSecret: 'secret',
-        ),
+    final youdao = factory.create(
+      const TtsConfig(
+        platform: TtsPlatform.youdao,
+        youdaoAppKey: 'key',
+        youdaoAppSecret: 'secret',
+        youdaoUsVoiceName: 'youmeimei',
+        youdaoUkVoiceName: 'youyingying',
+        speed: 60,
+        volume: 70,
       ),
-      isA<YoudaoTtsSynthesizer>(),
     );
+    expect(youdao, isA<YoudaoTtsSynthesizer>());
+    final synthesizer = youdao as YoudaoTtsSynthesizer;
+    expect(synthesizer.usVoiceName, 'youmeimei');
+    expect(synthesizer.ukVoiceName, 'youyingying');
+    expect(synthesizer.speed, 60);
+    expect(synthesizer.volume, 70);
   });
 }

@@ -27,7 +27,8 @@ final class _SpeechServicesConfigPageState
   final _ttsXfyunVoice = TextEditingController();
   final _ttsYoudaoAppKey = TextEditingController();
   final _ttsYoudaoAppSecret = TextEditingController();
-  final _ttsYoudaoVoice = TextEditingController();
+  final _ttsYoudaoUsVoiceName = TextEditingController();
+  final _ttsYoudaoUkVoiceName = TextEditingController();
   final _assessmentXfyunAppId = TextEditingController();
   final _assessmentXfyunApiKey = TextEditingController();
   final _assessmentXfyunApiSecret = TextEditingController();
@@ -42,8 +43,6 @@ final class _SpeechServicesConfigPageState
   int _pitch = 50;
   bool _ttsInitialized = false;
   bool _assessmentInitialized = false;
-  bool _showTtsSecrets = false;
-  bool _showAssessmentSecrets = false;
 
   @override
   void dispose() {
@@ -53,7 +52,8 @@ final class _SpeechServicesConfigPageState
     _ttsXfyunVoice.dispose();
     _ttsYoudaoAppKey.dispose();
     _ttsYoudaoAppSecret.dispose();
-    _ttsYoudaoVoice.dispose();
+    _ttsYoudaoUsVoiceName.dispose();
+    _ttsYoudaoUkVoiceName.dispose();
     _assessmentXfyunAppId.dispose();
     _assessmentXfyunApiKey.dispose();
     _assessmentXfyunApiSecret.dispose();
@@ -74,7 +74,8 @@ final class _SpeechServicesConfigPageState
     _ttsXfyunVoice.text = config.xfyunVoice;
     _ttsYoudaoAppKey.text = config.youdaoAppKey;
     _ttsYoudaoAppSecret.text = config.youdaoAppSecret;
-    _ttsYoudaoVoice.text = config.youdaoVoice;
+    _ttsYoudaoUsVoiceName.text = config.youdaoUsVoiceName;
+    _ttsYoudaoUkVoiceName.text = config.youdaoUkVoiceName;
     _speed = config.speed;
     _volume = config.volume;
     _pitch = config.pitch;
@@ -102,7 +103,8 @@ final class _SpeechServicesConfigPageState
       xfyunVoice: _ttsXfyunVoice.text.trim(),
       youdaoAppKey: _ttsYoudaoAppKey.text.trim(),
       youdaoAppSecret: _ttsYoudaoAppSecret.text.trim(),
-      youdaoVoice: _ttsYoudaoVoice.text.trim(),
+      youdaoUsVoiceName: _ttsYoudaoUsVoiceName.text.trim(),
+      youdaoUkVoiceName: _ttsYoudaoUkVoiceName.text.trim(),
       speed: _speed,
       volume: _volume,
       pitch: _pitch,
@@ -146,8 +148,6 @@ final class _SpeechServicesConfigPageState
               return _SpeechServicesForm(
                 ttsPlatform: _ttsPlatform,
                 assessmentPlatform: _assessmentPlatform,
-                showTtsSecrets: _showTtsSecrets,
-                showAssessmentSecrets: _showAssessmentSecrets,
                 isSavingTts: state.isSavingTts,
                 isSavingAssessment: state.isSavingAssessment,
                 ttsErrorCode: state.ttsErrorCode,
@@ -161,7 +161,8 @@ final class _SpeechServicesConfigPageState
                 ttsXfyunVoice: _ttsXfyunVoice,
                 ttsYoudaoAppKey: _ttsYoudaoAppKey,
                 ttsYoudaoAppSecret: _ttsYoudaoAppSecret,
-                ttsYoudaoVoice: _ttsYoudaoVoice,
+                ttsYoudaoUsVoiceName: _ttsYoudaoUsVoiceName,
+                ttsYoudaoUkVoiceName: _ttsYoudaoUkVoiceName,
                 assessmentXfyunAppId: _assessmentXfyunAppId,
                 assessmentXfyunApiKey: _assessmentXfyunApiKey,
                 assessmentXfyunApiSecret: _assessmentXfyunApiSecret,
@@ -172,14 +173,6 @@ final class _SpeechServicesConfigPageState
                 },
                 onAssessmentPlatformChanged: (value) {
                   setState(() => _assessmentPlatform = value);
-                },
-                onToggleTtsSecrets: () {
-                  setState(() => _showTtsSecrets = !_showTtsSecrets);
-                },
-                onToggleAssessmentSecrets: () {
-                  setState(
-                    () => _showAssessmentSecrets = !_showAssessmentSecrets,
-                  );
                 },
                 onSpeedChanged: (value) => setState(() => _speed = value),
                 onVolumeChanged: (value) => setState(() => _volume = value),
@@ -200,8 +193,6 @@ final class _SpeechServicesForm extends StatelessWidget {
   const _SpeechServicesForm({
     required this.ttsPlatform,
     required this.assessmentPlatform,
-    required this.showTtsSecrets,
-    required this.showAssessmentSecrets,
     required this.isSavingTts,
     required this.isSavingAssessment,
     required this.ttsErrorCode,
@@ -215,7 +206,8 @@ final class _SpeechServicesForm extends StatelessWidget {
     required this.ttsXfyunVoice,
     required this.ttsYoudaoAppKey,
     required this.ttsYoudaoAppSecret,
-    required this.ttsYoudaoVoice,
+    required this.ttsYoudaoUsVoiceName,
+    required this.ttsYoudaoUkVoiceName,
     required this.assessmentXfyunAppId,
     required this.assessmentXfyunApiKey,
     required this.assessmentXfyunApiSecret,
@@ -223,8 +215,6 @@ final class _SpeechServicesForm extends StatelessWidget {
     required this.assessmentYoudaoAppSecret,
     required this.onTtsPlatformChanged,
     required this.onAssessmentPlatformChanged,
-    required this.onToggleTtsSecrets,
-    required this.onToggleAssessmentSecrets,
     required this.onSpeedChanged,
     required this.onVolumeChanged,
     required this.onPitchChanged,
@@ -234,8 +224,6 @@ final class _SpeechServicesForm extends StatelessWidget {
 
   final TtsPlatform ttsPlatform;
   final PronunciationAssessmentPlatform assessmentPlatform;
-  final bool showTtsSecrets;
-  final bool showAssessmentSecrets;
   final bool isSavingTts;
   final bool isSavingAssessment;
   final String? ttsErrorCode;
@@ -249,7 +237,8 @@ final class _SpeechServicesForm extends StatelessWidget {
   final TextEditingController ttsXfyunVoice;
   final TextEditingController ttsYoudaoAppKey;
   final TextEditingController ttsYoudaoAppSecret;
-  final TextEditingController ttsYoudaoVoice;
+  final TextEditingController ttsYoudaoUsVoiceName;
+  final TextEditingController ttsYoudaoUkVoiceName;
   final TextEditingController assessmentXfyunAppId;
   final TextEditingController assessmentXfyunApiKey;
   final TextEditingController assessmentXfyunApiSecret;
@@ -258,8 +247,6 @@ final class _SpeechServicesForm extends StatelessWidget {
   final ValueChanged<TtsPlatform> onTtsPlatformChanged;
   final ValueChanged<PronunciationAssessmentPlatform>
   onAssessmentPlatformChanged;
-  final VoidCallback onToggleTtsSecrets;
-  final VoidCallback onToggleAssessmentSecrets;
   final ValueChanged<int> onSpeedChanged;
   final ValueChanged<int> onVolumeChanged;
   final ValueChanged<int> onPitchChanged;
@@ -289,7 +276,6 @@ final class _SpeechServicesForm extends StatelessWidget {
         _SectionCard(
           child: _TtsSection(
             platform: ttsPlatform,
-            showSecrets: showTtsSecrets,
             isSaving: isSavingTts,
             errorCode: ttsErrorCode,
             speed: speed,
@@ -301,9 +287,9 @@ final class _SpeechServicesForm extends StatelessWidget {
             xfyunVoice: ttsXfyunVoice,
             youdaoAppKey: ttsYoudaoAppKey,
             youdaoAppSecret: ttsYoudaoAppSecret,
-            youdaoVoice: ttsYoudaoVoice,
+            youdaoUsVoiceName: ttsYoudaoUsVoiceName,
+            youdaoUkVoiceName: ttsYoudaoUkVoiceName,
             onPlatformChanged: onTtsPlatformChanged,
-            onToggleSecrets: onToggleTtsSecrets,
             onSpeedChanged: onSpeedChanged,
             onVolumeChanged: onVolumeChanged,
             onPitchChanged: onPitchChanged,
@@ -314,7 +300,6 @@ final class _SpeechServicesForm extends StatelessWidget {
         _SectionCard(
           child: _AssessmentSection(
             platform: assessmentPlatform,
-            showSecrets: showAssessmentSecrets,
             isSaving: isSavingAssessment,
             errorCode: assessmentErrorCode,
             xfyunAppId: assessmentXfyunAppId,
@@ -323,7 +308,6 @@ final class _SpeechServicesForm extends StatelessWidget {
             youdaoAppKey: assessmentYoudaoAppKey,
             youdaoAppSecret: assessmentYoudaoAppSecret,
             onPlatformChanged: onAssessmentPlatformChanged,
-            onToggleSecrets: onToggleAssessmentSecrets,
             onSave: onSaveAssessment,
           ),
         ),
@@ -347,7 +331,6 @@ final class _SpeechServicesForm extends StatelessWidget {
 final class _TtsSection extends StatelessWidget {
   const _TtsSection({
     required this.platform,
-    required this.showSecrets,
     required this.isSaving,
     required this.errorCode,
     required this.speed,
@@ -359,9 +342,9 @@ final class _TtsSection extends StatelessWidget {
     required this.xfyunVoice,
     required this.youdaoAppKey,
     required this.youdaoAppSecret,
-    required this.youdaoVoice,
+    required this.youdaoUsVoiceName,
+    required this.youdaoUkVoiceName,
     required this.onPlatformChanged,
-    required this.onToggleSecrets,
     required this.onSpeedChanged,
     required this.onVolumeChanged,
     required this.onPitchChanged,
@@ -369,7 +352,6 @@ final class _TtsSection extends StatelessWidget {
   });
 
   final TtsPlatform platform;
-  final bool showSecrets;
   final bool isSaving;
   final String? errorCode;
   final int speed;
@@ -381,9 +363,9 @@ final class _TtsSection extends StatelessWidget {
   final TextEditingController xfyunVoice;
   final TextEditingController youdaoAppKey;
   final TextEditingController youdaoAppSecret;
-  final TextEditingController youdaoVoice;
+  final TextEditingController youdaoUsVoiceName;
+  final TextEditingController youdaoUkVoiceName;
   final ValueChanged<TtsPlatform> onPlatformChanged;
-  final VoidCallback onToggleSecrets;
   final ValueChanged<int> onSpeedChanged;
   final ValueChanged<int> onVolumeChanged;
   final ValueChanged<int> onPitchChanged;
@@ -432,39 +414,31 @@ final class _TtsSection extends StatelessWidget {
         ),
         if (platform != TtsPlatform.off) ...[
           const Divider(height: 28),
-          _SectionHeader(
-            title: '平台凭据',
-            showSecrets: showSecrets,
-            onToggleSecrets: onToggleSecrets,
-          ),
+          const _SectionHeader(title: '平台凭据'),
           const SizedBox(height: 10),
           if (platform == TtsPlatform.xfyun) ...[
             _CredentialField(
               controller: xfyunAppId,
               label: 'AppID',
               obscure: false,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: xfyunApiKey,
               label: 'APIKey',
               obscure: true,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: xfyunApiSecret,
               label: 'APISecret',
               obscure: true,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: xfyunVoice,
               label: '发音人（vcn）',
               obscure: false,
-              showSecrets: showSecrets,
               hint: '如 catherine、henry',
             ),
           ] else ...[
@@ -472,22 +446,26 @@ final class _TtsSection extends StatelessWidget {
               controller: youdaoAppKey,
               label: '应用 Key',
               obscure: false,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: youdaoAppSecret,
               label: '应用 Secret',
               obscure: true,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
-              controller: youdaoVoice,
-              label: '发音人（voice）',
+              controller: youdaoUsVoiceName,
+              label: '美式发音人（voiceName）',
               obscure: false,
-              showSecrets: showSecrets,
-              hint: 'female / male（美式）',
+              hint: '如 youmeimei',
+            ),
+            const SizedBox(height: 12),
+            _CredentialField(
+              controller: youdaoUkVoiceName,
+              label: '英式发音人（voiceName）',
+              obscure: false,
+              hint: '如 youyingying',
             ),
           ],
           const Divider(height: 28),
@@ -500,7 +478,8 @@ final class _TtsSection extends StatelessWidget {
           const SizedBox(height: 8),
           _TtsSlider(label: '语速', value: speed, onChanged: onSpeedChanged),
           _TtsSlider(label: '音量', value: volume, onChanged: onVolumeChanged),
-          _TtsSlider(label: '音调', value: pitch, onChanged: onPitchChanged),
+          if (platform == TtsPlatform.xfyun)
+            _TtsSlider(label: '音调', value: pitch, onChanged: onPitchChanged),
         ],
         if (errorCode != null) ...[
           const SizedBox(height: 12),
@@ -526,7 +505,6 @@ final class _TtsSection extends StatelessWidget {
 final class _AssessmentSection extends StatelessWidget {
   const _AssessmentSection({
     required this.platform,
-    required this.showSecrets,
     required this.isSaving,
     required this.errorCode,
     required this.xfyunAppId,
@@ -535,12 +513,10 @@ final class _AssessmentSection extends StatelessWidget {
     required this.youdaoAppKey,
     required this.youdaoAppSecret,
     required this.onPlatformChanged,
-    required this.onToggleSecrets,
     required this.onSave,
   });
 
   final PronunciationAssessmentPlatform platform;
-  final bool showSecrets;
   final bool isSaving;
   final String? errorCode;
   final TextEditingController xfyunAppId;
@@ -549,7 +525,6 @@ final class _AssessmentSection extends StatelessWidget {
   final TextEditingController youdaoAppKey;
   final TextEditingController youdaoAppSecret;
   final ValueChanged<PronunciationAssessmentPlatform> onPlatformChanged;
-  final VoidCallback onToggleSecrets;
   final VoidCallback onSave;
 
   @override
@@ -595,46 +570,37 @@ final class _AssessmentSection extends StatelessWidget {
         ),
         if (platform != PronunciationAssessmentPlatform.off) ...[
           const Divider(height: 28),
-          _SectionHeader(
-            title: '平台凭据',
-            showSecrets: showSecrets,
-            onToggleSecrets: onToggleSecrets,
-          ),
+          const _SectionHeader(title: '平台凭据'),
           const SizedBox(height: 10),
           if (platform == PronunciationAssessmentPlatform.xfyun) ...[
             _CredentialField(
               controller: xfyunAppId,
               label: 'AppID',
               obscure: false,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: xfyunApiKey,
               label: 'APIKey',
               obscure: true,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: xfyunApiSecret,
               label: 'APISecret',
               obscure: true,
-              showSecrets: showSecrets,
             ),
           ] else ...[
             _CredentialField(
               controller: youdaoAppKey,
               label: '应用 Key',
               obscure: false,
-              showSecrets: showSecrets,
             ),
             const SizedBox(height: 12),
             _CredentialField(
               controller: youdaoAppSecret,
               label: '应用 Secret',
               obscure: true,
-              showSecrets: showSecrets,
             ),
           ],
         ],
@@ -660,68 +626,71 @@ final class _AssessmentSection extends StatelessWidget {
 }
 
 final class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    required this.showSecrets,
-    required this.onToggleSecrets,
-  });
+  const _SectionHeader({required this.title});
 
   final String title;
-  final bool showSecrets;
-  final VoidCallback onToggleSecrets;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
-        ),
-        TextButton.icon(
-          onPressed: onToggleSecrets,
-          icon: Icon(
-            showSecrets
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
-            size: 18,
-          ),
-          label: Text(showSecrets ? '隐藏' : '显示'),
-        ),
-      ],
+    return Text(
+      title,
+      style: Theme.of(
+        context,
+      ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
     );
   }
 }
 
-final class _CredentialField extends StatelessWidget {
+final class _CredentialField extends StatefulWidget {
   const _CredentialField({
     required this.controller,
     required this.label,
     required this.obscure,
-    required this.showSecrets,
     this.hint,
   });
 
   final TextEditingController controller;
   final String label;
   final bool obscure;
-  final bool showSecrets;
   final String? hint;
+
+  @override
+  State<_CredentialField> createState() => _CredentialFieldState();
+}
+
+final class _CredentialFieldState extends State<_CredentialField> {
+  bool _visible = false;
+
+  @override
+  void didUpdateWidget(covariant _CredentialField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller ||
+        oldWidget.label != widget.label) {
+      _visible = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      obscureText: obscure && !showSecrets,
+      controller: widget.controller,
+      obscureText: widget.obscure && !_visible,
       autocorrect: false,
       enableSuggestions: false,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint ?? '填写 $label',
+        labelText: widget.label,
+        hintText: widget.hint ?? '填写 ${widget.label}',
+        suffixIcon: widget.obscure
+            ? IconButton(
+                onPressed: () => setState(() => _visible = !_visible),
+                tooltip: _visible ? '隐藏${widget.label}' : '显示${widget.label}',
+                icon: Icon(
+                  _visible
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                ),
+              )
+            : null,
       ),
     );
   }

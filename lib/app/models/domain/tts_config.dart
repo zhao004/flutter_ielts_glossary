@@ -12,7 +12,8 @@ final class TtsConfig {
     this.xfyunVoice = 'catherine',
     this.youdaoAppKey = '',
     this.youdaoAppSecret = '',
-    this.youdaoVoice = 'female',
+    this.youdaoUsVoiceName = 'youmeimei',
+    this.youdaoUkVoiceName = 'youyingying',
     this.speed = 50,
     this.volume = 50,
     this.pitch = 50,
@@ -42,8 +43,11 @@ final class TtsConfig {
   /// 有道智云的应用 Secret。
   final String youdaoAppSecret;
 
-  /// 有道发音人（`voice`），`female`/`male`，均为美式发音。
-  final String youdaoVoice;
+  /// 有道美式词典发音人（`voiceName`）。
+  final String youdaoUsVoiceName;
+
+  /// 有道英式词典发音人（`voiceName`）。
+  final String youdaoUkVoiceName;
 
   /// 语速（0-100，50 为默认）。
   final int speed;
@@ -65,7 +69,8 @@ final class TtsConfig {
     TtsPlatform.youdao =>
       youdaoAppKey.trim().isNotEmpty &&
           youdaoAppSecret.trim().isNotEmpty &&
-          youdaoVoice.trim().isNotEmpty,
+          youdaoUsVoiceName.trim().isNotEmpty &&
+          youdaoUkVoiceName.trim().isNotEmpty,
   };
 
   /// 当前平台是否可发起在线合成（凭据完整）。
@@ -79,7 +84,8 @@ final class TtsConfig {
     String? xfyunVoice,
     String? youdaoAppKey,
     String? youdaoAppSecret,
-    String? youdaoVoice,
+    String? youdaoUsVoiceName,
+    String? youdaoUkVoiceName,
     int? speed,
     int? volume,
     int? pitch,
@@ -92,7 +98,8 @@ final class TtsConfig {
       xfyunVoice: xfyunVoice ?? this.xfyunVoice,
       youdaoAppKey: youdaoAppKey ?? this.youdaoAppKey,
       youdaoAppSecret: youdaoAppSecret ?? this.youdaoAppSecret,
-      youdaoVoice: youdaoVoice ?? this.youdaoVoice,
+      youdaoUsVoiceName: youdaoUsVoiceName ?? this.youdaoUsVoiceName,
+      youdaoUkVoiceName: youdaoUkVoiceName ?? this.youdaoUkVoiceName,
       speed: speed ?? this.speed,
       volume: volume ?? this.volume,
       pitch: pitch ?? this.pitch,

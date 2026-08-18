@@ -85,27 +85,19 @@ class _SettingsPageState extends State<SettingsPage> {
           if (reloadStatistics != null) reloadStatistics(),
         ]);
       },
-      onUpdate:
-          ({
-            int? dailyGoal,
-            PronunciationAccent? pronunciationAccent,
-            bool? autoPlayPronunciation,
-            AppThemePreference? themePreference,
-          }) async {
-            await logic.updateSettings(
-              dailyGoal: dailyGoal,
-              pronunciationAccent: pronunciationAccent,
-              autoPlayPronunciation: autoPlayPronunciation,
-              themePreference: themePreference,
-            );
-            final saved = logic.state.settings;
-            if (saved != null && Get.isRegistered<AppThemeController>()) {
-              Get.find<AppThemeController>().apply(
-                themePreference: saved.themePreference,
-                accentPreference: saved.accentPreference,
-              );
-            }
-          },
+      onUpdate: ({int? dailyGoal, AppThemePreference? themePreference}) async {
+        await logic.updateSettings(
+          dailyGoal: dailyGoal,
+          themePreference: themePreference,
+        );
+        final saved = logic.state.settings;
+        if (saved != null && Get.isRegistered<AppThemeController>()) {
+          Get.find<AppThemeController>().apply(
+            themePreference: saved.themePreference,
+            accentPreference: saved.accentPreference,
+          );
+        }
+      },
       onReset: _confirmAndReset,
     );
   }
@@ -204,8 +196,6 @@ final class _ProfileContent extends StatelessWidget {
   final Future<void> Function() onRefresh;
   final Future<void> Function({
     int? dailyGoal,
-    PronunciationAccent? pronunciationAccent,
-    bool? autoPlayPronunciation,
     AppThemePreference? themePreference,
   })
   onUpdate;
@@ -564,8 +554,6 @@ final class _AppearanceCard extends StatelessWidget {
   final bool enabled;
   final Future<void> Function({
     int? dailyGoal,
-    PronunciationAccent? pronunciationAccent,
-    bool? autoPlayPronunciation,
     AppThemePreference? themePreference,
   })
   onUpdate;
@@ -661,8 +649,6 @@ final class _LearningSettingsCard extends StatelessWidget {
   final bool enabled;
   final Future<void> Function({
     int? dailyGoal,
-    PronunciationAccent? pronunciationAccent,
-    bool? autoPlayPronunciation,
     AppThemePreference? themePreference,
   })
   onUpdate;
@@ -676,22 +662,6 @@ final class _LearningSettingsCard extends StatelessWidget {
         children: [
           const _SectionLabel('学习设置'),
           const SizedBox(height: 19),
-          Row(
-            children: [
-              const Text('🎙️', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 12),
-              Text('默认口音', style: Theme.of(context).textTheme.bodyMedium),
-              const Spacer(),
-              _CompactSegment<PronunciationAccent>(
-                values: PronunciationAccent.values,
-                selected: settings.pronunciationAccent,
-                label: (value) => value == PronunciationAccent.uk ? 'UK' : 'US',
-                enabled: enabled,
-                onSelected: (value) => onUpdate(pronunciationAccent: value),
-              ),
-            ],
-          ),
-          const Divider(height: 28),
           InkWell(
             onTap: enabled
                 ? () => Get.toNamed(AppRouteNames.speechServices)
@@ -774,16 +744,6 @@ final class _LearningSettingsCard extends StatelessWidget {
               icon: const Icon(Icons.add, size: 16),
               label: const Text('自定义目标'),
             ),
-          ),
-          const SizedBox(height: 8),
-          SwitchListTile.adaptive(
-            contentPadding: EdgeInsets.zero,
-            visualDensity: VisualDensity.compact,
-            title: const Text('自动播放单词发音'),
-            value: settings.autoPlayPronunciation,
-            onChanged: enabled
-                ? (value) => onUpdate(autoPlayPronunciation: value)
-                : null,
           ),
         ],
       ),

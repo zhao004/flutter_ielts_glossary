@@ -87,8 +87,8 @@ enum PronunciationAccent { uk, us }
 final class AppSettingsState {
   AppSettingsState({
     required this.dailyGoal,
-    required this.pronunciationAccent,
-    required this.autoPlayPronunciation,
+    this.pronunciationAccent = PronunciationAccent.uk,
+    this.autoPlayPronunciation = false,
     required this.themePreference,
     this.accentPreference = FlexScheme.indigo,
     required DateTime? updatedAt,
@@ -118,7 +118,11 @@ final class AppSettingsState {
   static const int maximumDailyGoal = 500;
 
   final int dailyGoal;
+
+  /// 旧版本设置字段，仅为读取旧数据库和备份保持结构兼容；应用不再将其作为默认配置。
   final PronunciationAccent pronunciationAccent;
+
+  /// 旧版本设置字段，仅为读取旧数据库和备份保持结构兼容；应用不再执行自动播放。
   final bool autoPlayPronunciation;
   final AppThemePreference themePreference;
   final FlexScheme accentPreference;

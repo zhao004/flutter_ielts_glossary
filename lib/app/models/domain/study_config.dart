@@ -5,8 +5,6 @@ final class StudyConfig {
   StudyConfig({
     Set<int> frequencyGroupIds = const {},
     this.wordCount = defaultWordCount,
-    this.pronunciationAccent = PronunciationAccent.uk,
-    this.autoPlayPronunciation = false,
   }) : frequencyGroupIds = Set<int>.unmodifiable(frequencyGroupIds) {
     final invalid = this.frequencyGroupIds.difference(activeFrequencyGroupIds);
     if (invalid.isNotEmpty) {
@@ -25,13 +23,8 @@ final class StudyConfig {
     }
   }
 
-  /// 使用用户级发音偏好创建一次随机学习的默认配置。
-  factory StudyConfig.fromSettings(AppSettingsState settings) {
-    return StudyConfig(
-      pronunciationAccent: settings.pronunciationAccent,
-      autoPlayPronunciation: settings.autoPlayPronunciation,
-    );
-  }
+  /// 旧设置中的口音和自动播放值不再影响新建学习会话。
+  factory StudyConfig.fromSettings(AppSettingsState _) => StudyConfig();
 
   static const Set<int> activeFrequencyGroupIds = {1, 2, 3, 4, 5, 6};
   static const int defaultWordCount = 20;
@@ -40,25 +33,15 @@ final class StudyConfig {
 
   final Set<int> frequencyGroupIds;
   final int wordCount;
-  final PronunciationAccent pronunciationAccent;
-  final bool autoPlayPronunciation;
 
   Set<int> get effectiveFrequencyGroupIds =>
       frequencyGroupIds.isEmpty ? activeFrequencyGroupIds : frequencyGroupIds;
 
   /// 复制本次学习配置并重新执行词频组和数量边界校验。
-  StudyConfig copyWith({
-    Set<int>? frequencyGroupIds,
-    int? wordCount,
-    PronunciationAccent? pronunciationAccent,
-    bool? autoPlayPronunciation,
-  }) {
+  StudyConfig copyWith({Set<int>? frequencyGroupIds, int? wordCount}) {
     return StudyConfig(
       frequencyGroupIds: frequencyGroupIds ?? this.frequencyGroupIds,
       wordCount: wordCount ?? this.wordCount,
-      pronunciationAccent: pronunciationAccent ?? this.pronunciationAccent,
-      autoPlayPronunciation:
-          autoPlayPronunciation ?? this.autoPlayPronunciation,
     );
   }
 }

@@ -71,7 +71,6 @@ final class ReviewSessionLogic extends GetxController {
         return;
       }
       final queue = results[0] as ReviewQueueSnapshot;
-      final settings = results[1] as AppSettingsState;
       final queueWordIds = queue.items.map((item) => item.word.id).toSet();
       final favoriteWordIds = queueWordIds.isEmpty
           ? const <int>{}
@@ -95,7 +94,7 @@ final class ReviewSessionLogic extends GetxController {
           memoryRate: null,
           favoriteWordIds: favoriteWordIds,
           updatingFavoriteWordIds: const {},
-          pronunciationAccent: settings.pronunciationAccent,
+          pronunciationAccent: PronunciationAccent.uk,
           audioPhase: ReviewAudioPhase.idle,
           audioWordId: null,
           audioSource: null,

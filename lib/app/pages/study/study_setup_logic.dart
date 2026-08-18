@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
-import '../../models/domain/app_settings_state.dart';
 import '../../models/domain/study_config.dart';
 import '../../models/domain/study_run_state.dart';
 import '../../models/domain/study_setup_state.dart';
 import '../../repositories/settings_repository.dart';
 import 'study_session_starter.dart';
 
-/// 从用户设置初始化随机学习配置，并将启动委托给会话状态机。
+/// 初始化随机学习配置，并将启动委托给会话状态机。
 class StudySetupLogic extends GetxController {
   StudySetupLogic({
     required this.settingsRepository,
@@ -92,24 +91,6 @@ class StudySetupLogic extends GetxController {
       return;
     }
     _edit(current.copyWith(wordCount: value));
-  }
-
-  /// 设置本次学习默认发音口音，不修改用户级设置。
-  void setPronunciationAccent(PronunciationAccent value) {
-    final current = _requireEditableConfig('set_pronunciation_accent');
-    if (current.pronunciationAccent == value) {
-      return;
-    }
-    _edit(current.copyWith(pronunciationAccent: value));
-  }
-
-  /// 设置本次切换卡片时是否自动播放，不修改用户级设置。
-  void setAutoPlayPronunciation(bool value) {
-    final current = _requireEditableConfig('set_auto_play_pronunciation');
-    if (current.autoPlayPronunciation == value) {
-      return;
-    }
-    _edit(current.copyWith(autoPlayPronunciation: value));
   }
 
   /// 候选不足但至少有一个单词时，将学习数量调整为实际可用数量。

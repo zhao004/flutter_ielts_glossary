@@ -1,4 +1,3 @@
-import 'app_settings_state.dart';
 import 'pronunciation_score.dart';
 
 /// 发音练习会话的稳定阶段。
@@ -34,7 +33,6 @@ final class PronunciationPracticeRunState {
   PronunciationPracticeRunState({
     required this.phase,
     required this.expectedWord,
-    required this.accent,
     required this.score,
     required this.errorCode,
   }) {
@@ -56,13 +54,10 @@ final class PronunciationPracticeRunState {
     }
   }
 
-  factory PronunciationPracticeRunState.idle({
-    PronunciationAccent accent = PronunciationAccent.uk,
-  }) {
+  factory PronunciationPracticeRunState.idle() {
     return PronunciationPracticeRunState(
       phase: PronunciationPracticePhase.idle,
       expectedWord: null,
-      accent: accent,
       score: null,
       errorCode: null,
     );
@@ -70,14 +65,12 @@ final class PronunciationPracticeRunState {
 
   final PronunciationPracticePhase phase;
   final String? expectedWord;
-  final PronunciationAccent accent;
   final PronunciationScore? score;
   final String? errorCode;
 
   PronunciationPracticeRunState copyWith({
     PronunciationPracticePhase? phase,
     Object? expectedWord = _unset,
-    PronunciationAccent? accent,
     Object? score = _unset,
     Object? errorCode = _unset,
   }) {
@@ -86,7 +79,6 @@ final class PronunciationPracticeRunState {
       expectedWord: identical(expectedWord, _unset)
           ? this.expectedWord
           : expectedWord as String?,
-      accent: accent ?? this.accent,
       score: identical(score, _unset)
           ? this.score
           : score as PronunciationScore?,

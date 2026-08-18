@@ -61,10 +61,10 @@ void main() {
     await logic.start();
     expect(logic.state.phase, ReviewRunPhase.reviewing);
     expect(logic.state.currentItem?.word.word, 'academic');
-    expect(logic.state.pronunciationAccent, PronunciationAccent.us);
+    expect(logic.state.pronunciationAccent, PronunciationAccent.uk);
     expect(logic.state.isCurrentWordFavorite, isTrue);
 
-    await logic.playCurrentPronunciation();
+    await logic.playCurrentPronunciation(accent: PronunciationAccent.us);
     expect(logic.state.audioSource, PronunciationPlaybackSource.localAsset);
     expect(localPlayer.playedAssets, ['assets/audio/us/academic.mp3']);
 

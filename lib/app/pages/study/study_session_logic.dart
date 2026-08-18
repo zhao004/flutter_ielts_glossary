@@ -101,7 +101,6 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
           errorCode: null,
         ),
       );
-      _autoPlayCurrentPronunciation();
     } on Exception {
       if (_closed) {
         return;
@@ -203,7 +202,6 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
             errorCode: null,
           ),
         );
-        _autoPlayCurrentPronunciation();
       }
     } on Exception {
       if (_closed) {
@@ -242,7 +240,6 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
         errorCode: null,
       ),
     );
-    _autoPlayCurrentPronunciation();
   }
 
   /// 返回上一张；返回后再次翻开不会重复累计学习次数。
@@ -264,7 +261,6 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
         errorCode: null,
       ),
     );
-    _autoPlayCurrentPronunciation();
   }
 
   /// 幂等切换当前单词收藏；失败只更新收藏子状态。
@@ -332,12 +328,8 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
       StudyRunPhase.completed,
     }, 'play_pronunciation');
     final candidate = _requireCurrentCandidate();
-    final config = _state.config;
-    if (config == null) {
-      throw StateError('当前学习会话缺少配置');
-    }
     final word = candidate.word;
-    final selectedAccent = accent ?? config.pronunciationAccent;
+    final selectedAccent = accent ?? PronunciationAccent.uk;
     final sessionToken = _sessionToken;
     final audioToken = ++_audioToken;
     _replaceState(
@@ -450,13 +442,6 @@ class StudySessionLogic extends GetxController implements StudySessionStarter {
     }
     _state = nextState;
     update([contentUpdateId]);
-  }
-
-  void _autoPlayCurrentPronunciation() {
-    final config = _state.config;
-    if (config != null && config.autoPlayPronunciation) {
-      unawaited(playCurrentPronunciation(accent: config.pronunciationAccent));
-    }
   }
 
   bool _isCurrentSession(int token) => !_closed && token == _sessionToken;

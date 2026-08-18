@@ -142,7 +142,7 @@ void main() {
     expect(logic.state.currentIndex, 0);
   });
 
-  test('自动播放词库音频，未配置第三方 TTS 时保留不可用状态', () async {
+  test('进入和切换单词时不自动播放，手动播放仍保留口音选择', () async {
     final localPlayer = _FakeLocalAudioPlayer();
     final logic = _createLogic(
       learning: _FakeLearningRepository(),
@@ -151,14 +151,13 @@ void main() {
     );
     addTearDown(logic.onClose);
 
-    await logic.start(
-      StudyConfig(
-        wordCount: 3,
-        pronunciationAccent: PronunciationAccent.uk,
-        autoPlayPronunciation: true,
-      ),
-    );
+    await logic.start(StudyConfig(wordCount: 3));
     await _drainMicrotasks();
+    expect(logic.state.audioPhase, StudyAudioPhase.idle);
+    expect(logic.state.audioAccent, isNull);
+    expect(localPlayer.playedAssets, isEmpty);
+
+    await logic.playCurrentPronunciation(accent: PronunciationAccent.uk);
     expect(logic.state.audioPhase, StudyAudioPhase.completed);
     expect(logic.state.audioAccent, PronunciationAccent.uk);
     expect(logic.state.audioSource, PronunciationPlaybackSource.localAsset);
@@ -173,7 +172,8 @@ void main() {
     await logic.rate(StudyRating.known);
     await _drainMicrotasks();
     expect(logic.state.currentCandidate?.word.id, 2);
-    expect(logic.state.audioWordId, 2);
+    expect(logic.state.audioPhase, StudyAudioPhase.idle);
+    expect(logic.state.audioWordId, isNull);
   });
 
   test('关闭后忽略迟到发音结果并停止共享播放器', () async {

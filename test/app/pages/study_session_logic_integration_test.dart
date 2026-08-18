@@ -70,11 +70,6 @@ void main() {
     });
 
     await setupLogic.load();
-    expect(
-      setupLogic.state.config?.pronunciationAccent,
-      PronunciationAccent.us,
-    );
-    expect(setupLogic.state.config?.autoPlayPronunciation, isTrue);
     setupLogic.selectFrequencyGroups(const {1});
     setupLogic.setWordCount(3);
     await setupLogic.start();

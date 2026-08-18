@@ -1,13 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../models/domain/app_settings_state.dart';
 import '../../models/domain/pronunciation_practice_run_state.dart';
 import '../../models/domain/pronunciation_score.dart';
 import '../../routes/app_route_names.dart';
 import '../../theme/app_theme.dart';
-import '../../widgets/app_svg_icon.dart';
 import '../shell/main_shell_controller.dart';
 import 'pronunciation_practice_logic.dart';
 
@@ -80,7 +80,6 @@ final class _PronunciationPracticePageState
               state: logic.state,
               phonetic: widget.phonetic,
               translation: widget.translation,
-              onPrepare: logic.prepare,
               onListen: logic.startListening,
               onStop: logic.stop,
               onReset: logic.reset,
@@ -98,7 +97,6 @@ final class _PronunciationBody extends StatelessWidget {
     required this.state,
     required this.phonetic,
     required this.translation,
-    required this.onPrepare,
     required this.onListen,
     required this.onStop,
     required this.onReset,
@@ -108,11 +106,6 @@ final class _PronunciationBody extends StatelessWidget {
   final PronunciationPracticeRunState state;
   final String? phonetic;
   final String? translation;
-  final Future<void> Function({
-    required String expectedWord,
-    PronunciationAccent accent,
-  })
-  onPrepare;
   final Future<void> Function() onListen;
   final Future<void> Function() onStop;
   final VoidCallback onReset;
@@ -137,7 +130,6 @@ final class _PronunciationBody extends StatelessWidget {
         state: state,
         phonetic: phonetic,
         translation: translation,
-        onPrepare: onPrepare,
         onListen: onListen,
         onStop: onStop,
       );
@@ -151,7 +143,6 @@ final class _PronunciationReady extends StatelessWidget {
     required this.state,
     required this.phonetic,
     required this.translation,
-    required this.onPrepare,
     required this.onListen,
     required this.onStop,
   });
@@ -159,11 +150,6 @@ final class _PronunciationReady extends StatelessWidget {
   final PronunciationPracticeRunState state;
   final String? phonetic;
   final String? translation;
-  final Future<void> Function({
-    required String expectedWord,
-    PronunciationAccent accent,
-  })
-  onPrepare;
   final Future<void> Function() onListen;
   final Future<void> Function() onStop;
 
@@ -204,49 +190,6 @@ final class _PronunciationReady extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 22),
-        _SurfaceCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '选择发音',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).appTextSecondary,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Expanded(
-                    child: _AccentButton(
-                      label: '英式 UK',
-                      selected: state.accent == PronunciationAccent.uk,
-                      enabled: !listening,
-                      onTap: () => onPrepare(
-                        expectedWord: state.expectedWord!,
-                        accent: PronunciationAccent.uk,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _AccentButton(
-                      label: '美式 US',
-                      selected: state.accent == PronunciationAccent.us,
-                      enabled: !listening,
-                      onTap: () => onPrepare(
-                        expectedWord: state.expectedWord!,
-                        accent: PronunciationAccent.us,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 108),
-                ],
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 48),
         Center(
           child: _MicrophoneButton(
@@ -288,7 +231,7 @@ final class _PronunciationReady extends StatelessWidget {
   }
 }
 
-final class _MicrophoneButton extends StatelessWidget {
+final class _MicrophoneButton extends StatefulWidget {
   const _MicrophoneButton({
     required this.listening,
     required this.onStart,
@@ -296,75 +239,99 @@ final class _MicrophoneButton extends StatelessWidget {
   });
 
   final bool listening;
-  final VoidCallback onStart;
-  final VoidCallback onStop;
+  final Future<void> Function() onStart;
+  final Future<void> Function() onStop;
+
+  @override
+  State<_MicrophoneButton> createState() => _MicrophoneButtonState();
+}
+
+final class _MicrophoneButtonState extends State<_MicrophoneButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 720),
+      lowerBound: 0.86,
+      upperBound: 1.14,
+      value: 1,
+    );
+    _syncAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant _MicrophoneButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.listening != widget.listening) {
+      _syncAnimation();
+    }
+  }
+
+  void _syncAnimation() {
+    if (widget.listening) {
+      if (!_pulseController.isAnimating) {
+        _pulseController.repeat(reverse: true);
+      }
+    } else {
+      _pulseController.stop();
+      _pulseController.value = 1;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final foreground = listening
+    final foreground = widget.listening
         ? theme.colorScheme.onError
         : theme.colorScheme.onPrimary;
-    return Listener(
-      onPointerDown: (_) => onStart(),
-      onPointerUp: (_) => onStop(),
-      onPointerCancel: (_) => onStop(),
-      child: Container(
-        width: 128,
-        height: 128,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.06),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Container(
-            width: 102,
-            height: 102,
-            decoration: BoxDecoration(
-              color: listening
-                  ? theme.colorScheme.error
-                  : theme.colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: listening
-                  ? Icon(Icons.stop_rounded, color: foreground, size: 36)
-                  : AppSvgIcon(
-                      AppIconAssets.pronunciationMic,
-                      size: 38,
-                      color: foreground,
-                    ),
+    return Semantics(
+      button: true,
+      label: '按住录音',
+      child: GestureDetector(
+        key: const ValueKey('pronunciation-record-button'),
+        behavior: HitTestBehavior.opaque,
+        onLongPressStart: (_) => unawaited(widget.onStart()),
+        onLongPressEnd: (_) => unawaited(widget.onStop()),
+        onLongPressCancel: () => unawaited(widget.onStop()),
+        child: Container(
+          width: 128,
+          height: 128,
+          decoration: BoxDecoration(
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.06),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Container(
+              width: 102,
+              height: 102,
+              decoration: BoxDecoration(
+                color: widget.listening
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: ScaleTransition(
+                  scale: _pulseController,
+                  child: Icon(Icons.mic_rounded, color: foreground, size: 40),
+                ),
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-final class _AccentButton extends StatelessWidget {
-  const _AccentButton({
-    required this.label,
-    required this.selected,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 34,
-      child: selected
-          ? FilledButton(onPressed: enabled ? onTap : null, child: Text(label))
-          : OutlinedButton(
-              onPressed: enabled ? onTap : null,
-              child: Text(label),
-            ),
     );
   }
 }
@@ -408,9 +375,7 @@ final class _CloudPronunciationResult extends StatelessWidget {
         ),
         const SizedBox(height: 3),
         Text(
-          state.accent == PronunciationAccent.uk
-              ? '英式发音 · 第三方评测'
-              : '美式发音 · 第三方评测',
+          '第三方发音评测',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context).appTextSecondary,
           ),

@@ -191,7 +191,7 @@ void main() {
     expect(queue.calls, 0);
   });
 
-  test('启动合并默认口音和收藏，切换失败不影响翻卡状态', () async {
+  test('启动忽略旧默认口音并合并收藏，切换失败不影响翻卡状态', () async {
     final favorites = _FakeFavoriteRepository(wordIds: {1})
       ..wordGate = Completer<void>();
     final logic = _createLogic(
@@ -204,7 +204,7 @@ void main() {
     addTearDown(logic.onClose);
     await logic.start();
 
-    expect(logic.state.pronunciationAccent, PronunciationAccent.us);
+    expect(logic.state.pronunciationAccent, PronunciationAccent.uk);
     expect(logic.state.isCurrentWordFavorite, isTrue);
     logic.flip();
 
@@ -241,7 +241,7 @@ void main() {
     addTearDown(logic.onClose);
     await logic.start();
 
-    await logic.playCurrentPronunciation();
+    await logic.playCurrentPronunciation(accent: PronunciationAccent.us);
     expect(logic.state.audioPhase, ReviewAudioPhase.unavailable);
     expect(logic.state.audioErrorCode, ReviewRunErrorCodes.audioUnavailable);
 
