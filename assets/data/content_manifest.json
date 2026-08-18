@@ -1,0 +1,25 @@
+{
+  "formatVersion": 1,
+  "contentVersion": "2026.08.16-2278d049",
+  "sourceRepository": "https://github.com/chunsi-w/ielts-vocab-cloudflare",
+  "sourceRevision": "2278d049dacca60181aea4cba3deae1546a63381",
+  "generatedAt": "2026-08-05T11:15:42.000Z",
+  "databaseFile": "ielts_content.sqlite",
+  "databaseBytes": 35008512,
+  "databaseSha256": "a3804de02338b4d65008d7d731d0a2f1f68566db676a9e3b6576f9d3097db394",
+  "sourceDataSha256": "3635e2764cdd048bc61c5bdef831a165b616fbb9ad71b6b75e3fb5e0c03ce8f8",
+  "recordCounts": {
+    "words": 34211,
+    "sentences": 76332,
+    "activeGroups": 6,
+    "groupWords": {
+      "1": 4648,
+      "2": 3132,
+      "3": 3843,
+      "4": 5644,
+      "5": 5428,
+      "6": 11516
+    }
+  },
+  "licenseNotice": "MIT License\n\nCopyright (c) 2026 雅思词汇通\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n\n注意：本项目包含的剑桥雅思真题词频数据（FLDC）版权归原作者所有，\n本项目仅作为个人学习用途使用该数据。"
+}

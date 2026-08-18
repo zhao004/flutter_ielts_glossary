@@ -1,0 +1,43 @@
+name: Flutter validation
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Format, analyze and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.9
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib tool test integration_test
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Verify content database
+        if: ${{ hashFiles('assets/data/ielts_content.sqlite', 'assets/data/content_manifest.json') != '' }}
+        run: dart run tool/verify_content_database.dart --directory assets/data
+
+      - name: Verify packaged audio assets
+        if: ${{ hashFiles('assets/data/ielts_content.sqlite') != '' && hashFiles('assets/data/content_manifest.json') != '' && hashFiles('assets/audio/**') != '' }}
+        run: dart run tool/verify_content_database.dart --directory assets/data --audio-directory assets/audio

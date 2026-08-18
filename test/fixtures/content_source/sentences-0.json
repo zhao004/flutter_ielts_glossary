@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "wordId": 1,
+    "form": "Academic",
+    "sentence": "Academic research requires reliable evidence.",
+    "source": "测试来源",
+    "location": "Test 1 Part 1",
+    "translation": "学术研究需要可靠证据。"
+  },
+  {
+    "id": 2,
+    "wordId": 2,
+    "form": "academy",
+    "sentence": "The academy opened a new library.",
+    "source": "测试来源",
+    "location": "Test 1 Part 2",
+    "translation": "学院开设了一座新图书馆。"
+  }
+]

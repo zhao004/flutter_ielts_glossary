@@ -1,0 +1,1575 @@
+{
+  "wordCount": 34211,
+  "sentenceCount": 76332,
+  "groupWordCounts": {
+    "1": 4648,
+    "2": 3132,
+    "3": 3843,
+    "4": 5644,
+    "5": 5428,
+    "6": 11516
+  },
+  "duplicateWordsRemoved": 0,
+  "duplicateSentencesRemoved": 0,
+  "missingTranslations": 0,
+  "missingEnglishDefinitions": 7,
+  "missingPhonetics": 12,
+  "remoteAudioReferencesIgnored": 68422,
+  "localAudioReferences": 0,
+  "sourceWarningCount": 142,
+  "sourceWarningCounts": {
+    "invalid_target_form": 140,
+    "stats_word_count_mismatch": 1,
+    "group_word_count_mismatch": 1
+  },
+  "sourceWarnings": [
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 5732 不包含独立的目标词形",
+      "sourceFile": "sentences-0.json[5731]",
+      "details": {
+        "sentenceId": 5732,
+        "wordId": 959,
+        "targetForm": "champion",
+        "word": "champion"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 5927 不包含独立的目标词形",
+      "sourceFile": "sentences-0.json[5926]",
+      "details": {
+        "sentenceId": 5927,
+        "wordId": 993,
+        "targetForm": "gene",
+        "word": "gene"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 6282 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[311]",
+      "details": {
+        "sentenceId": 6282,
+        "wordId": 1053,
+        "targetForm": "import",
+        "word": "import"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 7236 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[1265]",
+      "details": {
+        "sentenceId": 7236,
+        "wordId": 1215,
+        "targetForm": "resist",
+        "word": "resist"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 7579 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[1608]",
+      "details": {
+        "sentenceId": 7579,
+        "wordId": 1272,
+        "targetForm": "express",
+        "word": "express"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 7608 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[1637]",
+      "details": {
+        "sentenceId": 7608,
+        "wordId": 1277,
+        "targetForm": "invent",
+        "word": "invent"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 7965 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[1994]",
+      "details": {
+        "sentenceId": 7965,
+        "wordId": 1337,
+        "targetForm": "ate",
+        "word": "eat"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 9207 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[3236]",
+      "details": {
+        "sentenceId": 9207,
+        "wordId": 1548,
+        "targetForm": "era",
+        "word": "era"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 9596 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[3625]",
+      "details": {
+        "sentenceId": 9596,
+        "wordId": 1613,
+        "targetForm": "tie",
+        "word": "tie"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 10258 不包含独立的目标词形",
+      "sourceFile": "sentences-1.json[4287]",
+      "details": {
+        "sentenceId": 10258,
+        "wordId": 1726,
+        "targetForm": "grammar",
+        "word": "grammar"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 12292 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[453]",
+      "details": {
+        "sentenceId": 12292,
+        "wordId": 2079,
+        "targetForm": "hat",
+        "word": "hat"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 12446 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[607]",
+      "details": {
+        "sentenceId": 12446,
+        "wordId": 2105,
+        "targetForm": "wing",
+        "word": "wing"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 12697 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[858]",
+      "details": {
+        "sentenceId": 12697,
+        "wordId": 2148,
+        "targetForm": "voyage",
+        "word": "voyage"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 12913 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[1074]",
+      "details": {
+        "sentenceId": 12913,
+        "wordId": 2186,
+        "targetForm": "bowl",
+        "word": "bowl"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 13234 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[1395]",
+      "details": {
+        "sentenceId": 13234,
+        "wordId": 2242,
+        "targetForm": "dive",
+        "word": "dive"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 13235 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[1396]",
+      "details": {
+        "sentenceId": 13235,
+        "wordId": 2242,
+        "targetForm": "dive",
+        "word": "dive"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 13414 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[1575]",
+      "details": {
+        "sentenceId": 13414,
+        "wordId": 2275,
+        "targetForm": "deceive",
+        "word": "deceive"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 13660 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[1821]",
+      "details": {
+        "sentenceId": 13660,
+        "wordId": 2317,
+        "targetForm": "distracted",
+        "word": "distract"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 14050 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[2211]",
+      "details": {
+        "sentenceId": 14050,
+        "wordId": 2385,
+        "targetForm": "silk",
+        "word": "silk"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 14797 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[2958]",
+      "details": {
+        "sentenceId": 14797,
+        "wordId": 2516,
+        "targetForm": "pest",
+        "word": "pest"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 14966 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[3127]",
+      "details": {
+        "sentenceId": 14966,
+        "wordId": 2546,
+        "targetForm": "fertiliser",
+        "word": "fertilizer"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16243 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[4404]",
+      "details": {
+        "sentenceId": 16243,
+        "wordId": 2778,
+        "targetForm": "wrist",
+        "word": "wrist"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16469 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[4630]",
+      "details": {
+        "sentenceId": 16469,
+        "wordId": 2819,
+        "targetForm": "broad",
+        "word": "broad"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16517 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[4678]",
+      "details": {
+        "sentenceId": 16517,
+        "wordId": 2830,
+        "targetForm": "courage",
+        "word": "courage"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16630 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[4791]",
+      "details": {
+        "sentenceId": 16630,
+        "wordId": 2850,
+        "targetForm": "pop",
+        "word": "pop"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16899 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[5060]",
+      "details": {
+        "sentenceId": 16899,
+        "wordId": 2898,
+        "targetForm": "nut",
+        "word": "nut"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 16978 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[5139]",
+      "details": {
+        "sentenceId": 16978,
+        "wordId": 2913,
+        "targetForm": "toy",
+        "word": "toy"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 17006 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[5167]",
+      "details": {
+        "sentenceId": 17006,
+        "wordId": 2918,
+        "targetForm": "breath",
+        "word": "breath"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 17308 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[5469]",
+      "details": {
+        "sentenceId": 17308,
+        "wordId": 2976,
+        "targetForm": "jaw",
+        "word": "jaw"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 17348 不包含独立的目标词形",
+      "sourceFile": "sentences-2.json[5509]",
+      "details": {
+        "sentenceId": 17348,
+        "wordId": 2984,
+        "targetForm": "offend",
+        "word": "offend"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 18824 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[1380]",
+      "details": {
+        "sentenceId": 18824,
+        "wordId": 3260,
+        "targetForm": "transit",
+        "word": "infection"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 19460 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[2016]",
+      "details": {
+        "sentenceId": 19460,
+        "wordId": 3386,
+        "targetForm": "pen",
+        "word": "pen"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 19641 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[2197]",
+      "details": {
+        "sentenceId": 19641,
+        "wordId": 3423,
+        "targetForm": "lap",
+        "word": "lap"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 20035 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[2591]",
+      "details": {
+        "sentenceId": 20035,
+        "wordId": 3500,
+        "targetForm": "continuous",
+        "word": "continuous"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 20841 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[3397]",
+      "details": {
+        "sentenceId": 20841,
+        "wordId": 3663,
+        "targetForm": "tin",
+        "word": "tin"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 21150 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[3706]",
+      "details": {
+        "sentenceId": 21150,
+        "wordId": 3732,
+        "targetForm": "idiom",
+        "word": "idiom"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 21998 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[4554]",
+      "details": {
+        "sentenceId": 21998,
+        "wordId": 3907,
+        "targetForm": "ant",
+        "word": "ant"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 22000 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[4556]",
+      "details": {
+        "sentenceId": 22000,
+        "wordId": 3907,
+        "targetForm": "ant",
+        "word": "ant"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 22001 不包含独立的目标词形",
+      "sourceFile": "sentences-3.json[4557]",
+      "details": {
+        "sentenceId": 22001,
+        "wordId": 3907,
+        "targetForm": "ant",
+        "word": "ant"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 23245 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[828]",
+      "details": {
+        "sentenceId": 23245,
+        "wordId": 4181,
+        "targetForm": "displace",
+        "word": "displace"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 23437 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1020]",
+      "details": {
+        "sentenceId": 23437,
+        "wordId": 4222,
+        "targetForm": "beg",
+        "word": "beg"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 23564 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1147]",
+      "details": {
+        "sentenceId": 23564,
+        "wordId": 4253,
+        "targetForm": "prone",
+        "word": "prone"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 24088 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1671]",
+      "details": {
+        "sentenceId": 24088,
+        "wordId": 4380,
+        "targetForm": "ore",
+        "word": "ore"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 24092 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1675]",
+      "details": {
+        "sentenceId": 24092,
+        "wordId": 4380,
+        "targetForm": "ore",
+        "word": "ore"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 24267 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1850]",
+      "details": {
+        "sentenceId": 24267,
+        "wordId": 4421,
+        "targetForm": "pat",
+        "word": "pat"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 24322 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[1905]",
+      "details": {
+        "sentenceId": 24322,
+        "wordId": 4435,
+        "targetForm": "tram",
+        "word": "tram"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 25164 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[2747]",
+      "details": {
+        "sentenceId": 25164,
+        "wordId": 4649,
+        "targetForm": "accomplish",
+        "word": "accordance"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 25927 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[3510]",
+      "details": {
+        "sentenceId": 25927,
+        "wordId": 4844,
+        "targetForm": "ton",
+        "word": "ton"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 26156 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[3739]",
+      "details": {
+        "sentenceId": 26156,
+        "wordId": 4906,
+        "targetForm": "nap",
+        "word": "nap"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 26316 不包含独立的目标词形",
+      "sourceFile": "sentences-4.json[3899]",
+      "details": {
+        "sentenceId": 26316,
+        "wordId": 4949,
+        "targetForm": "mould",
+        "word": "mold"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 26747 不包含独立的目标词形",
+      "sourceFile": "sentences-5.json[238]",
+      "details": {
+        "sentenceId": 26747,
+        "wordId": 5067,
+        "targetForm": "odour",
+        "word": "odor"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 26748 不包含独立的目标词形",
+      "sourceFile": "sentences-5.json[239]",
+      "details": {
+        "sentenceId": 26748,
+        "wordId": 5067,
+        "targetForm": "odour",
+        "word": "odor"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 28034 不包含独立的目标词形",
+      "sourceFile": "sentences-5.json[1525]",
+      "details": {
+        "sentenceId": 28034,
+        "wordId": 5417,
+        "targetForm": "accidental",
+        "word": "accidental"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 28959 不包含独立的目标词形",
+      "sourceFile": "sentences-5.json[2450]",
+      "details": {
+        "sentenceId": 28959,
+        "wordId": 5679,
+        "targetForm": "millimetre",
+        "word": "millimeter"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 30678 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[523]",
+      "details": {
+        "sentenceId": 30678,
+        "wordId": 6159,
+        "targetForm": "oars",
+        "word": "oar"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 30962 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[807]",
+      "details": {
+        "sentenceId": 30962,
+        "wordId": 6237,
+        "targetForm": "bowl",
+        "word": "bowling"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 31629 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[1474]",
+      "details": {
+        "sentenceId": 31629,
+        "wordId": 6418,
+        "targetForm": "kin",
+        "word": "kin"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 31880 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[1725]",
+      "details": {
+        "sentenceId": 31880,
+        "wordId": 6480,
+        "targetForm": "literate",
+        "word": "literate"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 32317 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[2162]",
+      "details": {
+        "sentenceId": 32317,
+        "wordId": 6617,
+        "targetForm": "dive",
+        "word": "diving"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 32318 不包含独立的目标词形",
+      "sourceFile": "sentences-6.json[2163]",
+      "details": {
+        "sentenceId": 32318,
+        "wordId": 6617,
+        "targetForm": "dive",
+        "word": "diving"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 34290 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[637]",
+      "details": {
+        "sentenceId": 34290,
+        "wordId": 7203,
+        "targetForm": "compliance",
+        "word": "compliance"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 34610 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[957]",
+      "details": {
+        "sentenceId": 34610,
+        "wordId": 7311,
+        "targetForm": "mosquito",
+        "word": "mailbox"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 34664 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[1011]",
+      "details": {
+        "sentenceId": 34664,
+        "wordId": 7333,
+        "targetForm": "spawn",
+        "word": "spawn"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 34918 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[1265]",
+      "details": {
+        "sentenceId": 34918,
+        "wordId": 7407,
+        "targetForm": "stimulation",
+        "word": "stimulation"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35009 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[1356]",
+      "details": {
+        "sentenceId": 35009,
+        "wordId": 7436,
+        "targetForm": "euro",
+        "word": "Euro"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35928 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2275]",
+      "details": {
+        "sentenceId": 35928,
+        "wordId": 7719,
+        "targetForm": "ion",
+        "word": "ion"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35929 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2276]",
+      "details": {
+        "sentenceId": 35929,
+        "wordId": 7719,
+        "targetForm": "ion",
+        "word": "ion"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35931 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2278]",
+      "details": {
+        "sentenceId": 35931,
+        "wordId": 7719,
+        "targetForm": "ions",
+        "word": "ion"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35950 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2297]",
+      "details": {
+        "sentenceId": 35950,
+        "wordId": 7724,
+        "targetForm": "linguist",
+        "word": "linguist"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 35952 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2299]",
+      "details": {
+        "sentenceId": 35952,
+        "wordId": 7724,
+        "targetForm": "linguist",
+        "word": "linguist"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 36075 不包含独立的目标词形",
+      "sourceFile": "sentences-7.json[2422]",
+      "details": {
+        "sentenceId": 36075,
+        "wordId": 7771,
+        "targetForm": "teenage",
+        "word": "teenage"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 36991 不包含独立的目标词形",
+      "sourceFile": "sentences-8.json[307]",
+      "details": {
+        "sentenceId": 36991,
+        "wordId": 8103,
+        "targetForm": "advert",
+        "word": "advert"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 37278 不包含独立的目标词形",
+      "sourceFile": "sentences-8.json[594]",
+      "details": {
+        "sentenceId": 37278,
+        "wordId": 8207,
+        "targetForm": "teller",
+        "word": "teller"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 38347 不包含独立的目标词形",
+      "sourceFile": "sentences-8.json[1663]",
+      "details": {
+        "sentenceId": 38347,
+        "wordId": 8644,
+        "targetForm": "ate",
+        "word": "ate"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 38875 不包含独立的目标词形",
+      "sourceFile": "sentences-8.json[2191]",
+      "details": {
+        "sentenceId": 38875,
+        "wordId": 8863,
+        "targetForm": "nut",
+        "word": "nuts"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 39987 不包含独立的目标词形",
+      "sourceFile": "sentences-9.json[718]",
+      "details": {
+        "sentenceId": 39987,
+        "wordId": 9314,
+        "targetForm": "dens",
+        "word": "den"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 42005 不包含独立的目标词形",
+      "sourceFile": "sentences-10.json[567]",
+      "details": {
+        "sentenceId": 42005,
+        "wordId": 10244,
+        "targetForm": "ford",
+        "word": "ford"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 42667 不包含独立的目标词形",
+      "sourceFile": "sentences-10.json[1229]",
+      "details": {
+        "sentenceId": 42667,
+        "wordId": 10526,
+        "targetForm": "human being",
+        "word": "human being"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 44286 不包含独立的目标词形",
+      "sourceFile": "sentences-11.json[711]",
+      "details": {
+        "sentenceId": 44286,
+        "wordId": 11314,
+        "targetForm": "broad",
+        "word": "broadly"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 44577 不包含独立的目标词形",
+      "sourceFile": "sentences-11.json[1002]",
+      "details": {
+        "sentenceId": 44577,
+        "wordId": 11463,
+        "targetForm": "lone",
+        "word": "lone"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 44578 不包含独立的目标词形",
+      "sourceFile": "sentences-11.json[1003]",
+      "details": {
+        "sentenceId": 44578,
+        "wordId": 11463,
+        "targetForm": "lone",
+        "word": "lone"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 45779 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[248]",
+      "details": {
+        "sentenceId": 45779,
+        "wordId": 12129,
+        "targetForm": "ate",
+        "word": "eating"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 46275 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[744]",
+      "details": {
+        "sentenceId": 46275,
+        "wordId": 12391,
+        "targetForm": "toy",
+        "word": "toys"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 46600 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[1069]",
+      "details": {
+        "sentenceId": 46600,
+        "wordId": 12560,
+        "targetForm": "elm",
+        "word": "elm"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 46602 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[1071]",
+      "details": {
+        "sentenceId": 46602,
+        "wordId": 12560,
+        "targetForm": "elm",
+        "word": "elm"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 46603 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[1072]",
+      "details": {
+        "sentenceId": 46603,
+        "wordId": 12560,
+        "targetForm": "elm",
+        "word": "elm"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 46995 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[1464]",
+      "details": {
+        "sentenceId": 46995,
+        "wordId": 12734,
+        "targetForm": "pro",
+        "word": "pro"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 47259 不包含独立的目标词形",
+      "sourceFile": "sentences-12.json[1728]",
+      "details": {
+        "sentenceId": 47259,
+        "wordId": 12869,
+        "targetForm": "wing",
+        "word": "wings"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 47685 不包含独立的目标词形",
+      "sourceFile": "sentences-13.json[178]",
+      "details": {
+        "sentenceId": 47685,
+        "wordId": 13103,
+        "targetForm": "import",
+        "word": "imported"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 48413 不包含独立的目标词形",
+      "sourceFile": "sentences-13.json[906]",
+      "details": {
+        "sentenceId": 48413,
+        "wordId": 13466,
+        "targetForm": "express",
+        "word": "expressly"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 48440 不包含独立的目标词形",
+      "sourceFile": "sentences-13.json[933]",
+      "details": {
+        "sentenceId": 48440,
+        "wordId": 13473,
+        "targetForm": "fertiliser",
+        "word": "Fertilizers"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 49327 不包含独立的目标词形",
+      "sourceFile": "sentences-13.json[1820]",
+      "details": {
+        "sentenceId": 49327,
+        "wordId": 13945,
+        "targetForm": "distracted",
+        "word": "distracted"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 49440 不包含独立的目标词形",
+      "sourceFile": "sentences-14.json[6]",
+      "details": {
+        "sentenceId": 49440,
+        "wordId": 14003,
+        "targetForm": "gin",
+        "word": "gin"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 49542 不包含独立的目标词形",
+      "sourceFile": "sentences-14.json[108]",
+      "details": {
+        "sentenceId": 49542,
+        "wordId": 14043,
+        "targetForm": "iconoclast",
+        "word": "iconoclast"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 51027 不包含独立的目标词形",
+      "sourceFile": "sentences-14.json[1593]",
+      "details": {
+        "sentenceId": 51027,
+        "wordId": 14778,
+        "targetForm": "polar bear",
+        "word": "polar bear"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 51028 不包含独立的目标词形",
+      "sourceFile": "sentences-14.json[1594]",
+      "details": {
+        "sentenceId": 51028,
+        "wordId": 14778,
+        "targetForm": "polar bear",
+        "word": "polar bear"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 51536 不包含独立的目标词形",
+      "sourceFile": "sentences-15.json[98]",
+      "details": {
+        "sentenceId": 51536,
+        "wordId": 15057,
+        "targetForm": "cellulose",
+        "word": "cellulose"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 52382 不包含独立的目标词形",
+      "sourceFile": "sentences-15.json[944]",
+      "details": {
+        "sentenceId": 52382,
+        "wordId": 15441,
+        "targetForm": "polynesian",
+        "word": "polynesian"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 54360 不包含独立的目标词形",
+      "sourceFile": "sentences-16.json[933]",
+      "details": {
+        "sentenceId": 54360,
+        "wordId": 16503,
+        "targetForm": "chief executive",
+        "word": "chief executive"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 54887 不包含独立的目标词形",
+      "sourceFile": "sentences-16.json[1460]",
+      "details": {
+        "sentenceId": 54887,
+        "wordId": 16795,
+        "targetForm": "invent",
+        "word": "invented"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 56306 不包含独立的目标词形",
+      "sourceFile": "sentences-17.json[946]",
+      "details": {
+        "sentenceId": 56306,
+        "wordId": 17525,
+        "targetForm": "ate",
+        "word": "eaten"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 56463 不包含独立的目标词形",
+      "sourceFile": "sentences-17.json[1103]",
+      "details": {
+        "sentenceId": 56463,
+        "wordId": 17622,
+        "targetForm": "gene",
+        "word": "genes"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 56667 不包含独立的目标词形",
+      "sourceFile": "sentences-17.json[1307]",
+      "details": {
+        "sentenceId": 56667,
+        "wordId": 17723,
+        "targetForm": "jaw",
+        "word": "jaws"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 56999 不包含独立的目标词形",
+      "sourceFile": "sentences-17.json[1639]",
+      "details": {
+        "sentenceId": 56999,
+        "wordId": 17904,
+        "targetForm": "pen",
+        "word": "pens"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 57436 不包含独立的目标词形",
+      "sourceFile": "sentences-18.json[243]",
+      "details": {
+        "sentenceId": 57436,
+        "wordId": 18141,
+        "targetForm": "tie",
+        "word": "tied"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 58216 不包含独立的目标词形",
+      "sourceFile": "sentences-18.json[1023]",
+      "details": {
+        "sentenceId": 58216,
+        "wordId": 18565,
+        "targetForm": "err",
+        "word": "err"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 58765 不包含独立的目标词形",
+      "sourceFile": "sentences-18.json[1572]",
+      "details": {
+        "sentenceId": 58765,
+        "wordId": 18885,
+        "targetForm": "mote",
+        "word": "mote"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 59910 不包含独立的目标词形",
+      "sourceFile": "sentences-19.json[913]",
+      "details": {
+        "sentenceId": 59910,
+        "wordId": 19460,
+        "targetForm": "alphabetic",
+        "word": "alphabetic"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 62296 不包含独立的目标词形",
+      "sourceFile": "sentences-20.json[1464]",
+      "details": {
+        "sentenceId": 62296,
+        "wordId": 20912,
+        "targetForm": "written language",
+        "word": "written language"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 62417 不包含独立的目标词形",
+      "sourceFile": "sentences-20.json[1585]",
+      "details": {
+        "sentenceId": 62417,
+        "wordId": 20989,
+        "targetForm": "ant",
+        "word": "ants"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 62419 不包含独立的目标词形",
+      "sourceFile": "sentences-20.json[1587]",
+      "details": {
+        "sentenceId": 62419,
+        "wordId": 20989,
+        "targetForm": "ant",
+        "word": "ants"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 62420 不包含独立的目标词形",
+      "sourceFile": "sentences-20.json[1588]",
+      "details": {
+        "sentenceId": 62420,
+        "wordId": 20989,
+        "targetForm": "ant",
+        "word": "ants"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 62867 不包含独立的目标词形",
+      "sourceFile": "sentences-21.json[423]",
+      "details": {
+        "sentenceId": 62867,
+        "wordId": 21265,
+        "targetForm": "coral reef",
+        "word": "coral reef"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 63103 不包含独立的目标词形",
+      "sourceFile": "sentences-21.json[659]",
+      "details": {
+        "sentenceId": 63103,
+        "wordId": 21405,
+        "targetForm": "ate",
+        "word": "eats"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 63497 不包含独立的目标词形",
+      "sourceFile": "sentences-21.json[1053]",
+      "details": {
+        "sentenceId": 63497,
+        "wordId": 21641,
+        "targetForm": "hat",
+        "word": "hats"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 64323 不包含独立的目标词形",
+      "sourceFile": "sentences-22.json[229]",
+      "details": {
+        "sentenceId": 64323,
+        "wordId": 22146,
+        "targetForm": "Plato",
+        "word": "Plato"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 64880 不包含独立的目标词形",
+      "sourceFile": "sentences-22.json[786]",
+      "details": {
+        "sentenceId": 64880,
+        "wordId": 22486,
+        "targetForm": "tasmania",
+        "word": "Tasmania"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 65199 不包含独立的目标词形",
+      "sourceFile": "sentences-22.json[1105]",
+      "details": {
+        "sentenceId": 65199,
+        "wordId": 22666,
+        "targetForm": "white mountain",
+        "word": "white mountain"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 65502 不包含独立的目标词形",
+      "sourceFile": "sentences-22.json[1408]",
+      "details": {
+        "sentenceId": 65502,
+        "wordId": 22960,
+        "targetForm": "botanic",
+        "word": "botanic"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 66687 不包含独立的目标词形",
+      "sourceFile": "sentences-24.json[200]",
+      "details": {
+        "sentenceId": 66687,
+        "wordId": 24211,
+        "targetForm": "offend",
+        "word": "offending"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 66798 不包含独立的目标词形",
+      "sourceFile": "sentences-24.json[311]",
+      "details": {
+        "sentenceId": 66798,
+        "wordId": 24302,
+        "targetForm": "patent",
+        "word": "patently"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 69975 不包含独立的目标词形",
+      "sourceFile": "sentences-27.json[383]",
+      "details": {
+        "sentenceId": 69975,
+        "wordId": 27350,
+        "targetForm": "pest",
+        "word": "pests"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 70778 不包含独立的目标词形",
+      "sourceFile": "sentences-28.json[67]",
+      "details": {
+        "sentenceId": 70778,
+        "wordId": 28069,
+        "targetForm": "techno",
+        "word": "techno"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 70785 不包含独立的目标词形",
+      "sourceFile": "sentences-28.json[74]",
+      "details": {
+        "sentenceId": 70785,
+        "wordId": 28073,
+        "targetForm": "ted",
+        "word": "ted"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 70861 不包含独立的目标词形",
+      "sourceFile": "sentences-28.json[150]",
+      "details": {
+        "sentenceId": 70861,
+        "wordId": 28146,
+        "targetForm": "ton",
+        "word": "tons"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 71645 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[21]",
+      "details": {
+        "sentenceId": 71645,
+        "wordId": 29022,
+        "targetForm": "beg",
+        "word": "begging"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 71687 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[63]",
+      "details": {
+        "sentenceId": 71687,
+        "wordId": 29071,
+        "targetForm": "bio",
+        "word": "bio"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 71749 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[125]",
+      "details": {
+        "sentenceId": 71749,
+        "wordId": 29165,
+        "targetForm": "breath",
+        "word": "breaths"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 71973 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[349]",
+      "details": {
+        "sentenceId": 71973,
+        "wordId": 29438,
+        "targetForm": "clinical trial",
+        "word": "clinical trial"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 72327 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[703]",
+      "details": {
+        "sentenceId": 72327,
+        "wordId": 29830,
+        "targetForm": "dens",
+        "word": "dens"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 72410 不包含独立的目标词形",
+      "sourceFile": "sentences-29.json[786]",
+      "details": {
+        "sentenceId": 72410,
+        "wordId": 29921,
+        "targetForm": "displace",
+        "word": "displaced"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 72668 不包含独立的目标词形",
+      "sourceFile": "sentences-30.json[179]",
+      "details": {
+        "sentenceId": 72668,
+        "wordId": 30204,
+        "targetForm": "euro",
+        "word": "Euros"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 73682 不包含独立的目标词形",
+      "sourceFile": "sentences-31.json[302]",
+      "details": {
+        "sentenceId": 73682,
+        "wordId": 31355,
+        "targetForm": "lap",
+        "word": "laps"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 74099 不包含独立的目标词形",
+      "sourceFile": "sentences-31.json[719]",
+      "details": {
+        "sentenceId": 74099,
+        "wordId": 31790,
+        "targetForm": "mri",
+        "word": "MRI"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 74134 不包含独立的目标词形",
+      "sourceFile": "sentences-31.json[754]",
+      "details": {
+        "sentenceId": 74134,
+        "wordId": 31826,
+        "targetForm": "nap",
+        "word": "napping"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 74268 不包含独立的目标词形",
+      "sourceFile": "sentences-31.json[888]",
+      "details": {
+        "sentenceId": 74268,
+        "wordId": 31977,
+        "targetForm": "offend",
+        "word": "offended"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 74346 不包含独立的目标词形",
+      "sourceFile": "sentences-32.json[48]",
+      "details": {
+        "sentenceId": 74346,
+        "wordId": 32041,
+        "targetForm": "opportunity cost",
+        "word": "opportunity cost"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 74651 不包含独立的目标词形",
+      "sourceFile": "sentences-32.json[353]",
+      "details": {
+        "sentenceId": 74651,
+        "wordId": 32409,
+        "targetForm": "price tag",
+        "word": "price tag"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 76304 不包含独立的目标词形",
+      "sourceFile": "sentences-34.json[174]",
+      "details": {
+        "sentenceId": 76304,
+        "wordId": 34181,
+        "targetForm": "wrist",
+        "word": "wrists"
+      }
+    },
+    {
+      "code": "invalid_target_form",
+      "message": "例句 ID 76313 不包含独立的目标词形",
+      "sourceFile": "sentences-34.json[183]",
+      "details": {
+        "sentenceId": 76313,
+        "wordId": 34194,
+        "targetForm": "yin",
+        "word": "yin"
+      }
+    },
+    {
+      "code": "stats_word_count_mismatch",
+      "message": "stats 声明 34212 个单词，实际分块为 34211 个"
+    },
+    {
+      "code": "group_word_count_mismatch",
+      "message": "词频组 rank 6 声明 11517 个单词，实际为 11516 个"
+    }
+  ]
+}

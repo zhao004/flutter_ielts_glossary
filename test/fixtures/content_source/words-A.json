@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "word": "academic",
+    "translation": "学术的",
+    "phonetic": "ˌækəˈdemɪk",
+    "audioUk": "https://example.invalid/academic-uk.mp3",
+    "audioUs": "https://example.invalid/academic-us.mp3",
+    "englishDefinition": "Related to education and scholarship.",
+    "mnemonic": "academy + ic",
+    "occurrences": 150,
+    "groupId": 1,
+    "firstLetter": "A",
+    "length": 8,
+    "sentenceCount": 1
+  },
+  {
+    "id": 2,
+    "word": "academy",
+    "translation": "学院",
+    "phonetic": "əˈkædəmi",
+    "englishDefinition": "A place of study or training.",
+    "occurrences": 120,
+    "groupId": 1,
+    "firstLetter": "A",
+    "length": 7,
+    "sentenceCount": 1
+  }
+]

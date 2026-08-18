@@ -1,0 +1,9 @@
+[
+  {"id": 1, "name": "出现100次以上", "rank": 1, "minOccur": 100, "maxOccur": 999999, "wordCount": 2},
+  {"id": 2, "name": "出现40~99次", "rank": 2, "minOccur": 40, "maxOccur": 99, "wordCount": 1},
+  {"id": 3, "name": "出现20~39次", "rank": 3, "minOccur": 20, "maxOccur": 39, "wordCount": 0},
+  {"id": 4, "name": "出现10~19次", "rank": 4, "minOccur": 10, "maxOccur": 19, "wordCount": 0},
+  {"id": 5, "name": "出现6~9次", "rank": 5, "minOccur": 6, "maxOccur": 9, "wordCount": 0},
+  {"id": 6, "name": "出现3~5次", "rank": 6, "minOccur": 3, "maxOccur": 5, "wordCount": 0},
+  {"id": 7, "name": "出现1~2次", "rank": 7, "minOccur": 1, "maxOccur": 2, "wordCount": 0}
+]
