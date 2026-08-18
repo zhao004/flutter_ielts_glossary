@@ -5,7 +5,6 @@ import '../../models/domain/learning_statistics.dart';
 import '../../models/domain/review_memory_rate.dart';
 import '../../models/domain/statistics_report.dart';
 import '../../models/domain/statistics_run_state.dart';
-import '../shell/main_shell_controller.dart';
 import 'statistics_logic.dart';
 
 /// 完整统计页面，展示累计活动、正确率、复习记忆率、趋势和学习日历。
@@ -15,9 +14,7 @@ class StatisticsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('学习统计'),
-      ),
+      appBar: AppBar(title: const Text('学习统计')),
       body: GetBuilder<StatisticsLogic>(
         id: StatisticsLogic.updateId,
         builder: (logic) =>
@@ -114,8 +111,7 @@ final class _OverviewCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '连续学习 ${dashboard.currentStreakDays} 天 · 待复习 ${dashboard
-                  .dueReviewCount} 个',
+              '连续学习 ${dashboard.currentStreakDays} 天 · 待复习 ${dashboard.dueReviewCount} 个',
               style: theme.textTheme.bodyMedium,
             ),
           ],
@@ -167,10 +163,7 @@ final class _MemoryRateSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('复习记忆率', style: Theme
-            .of(context)
-            .textTheme
-            .titleMedium),
+        Text('复习记忆率', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -215,22 +208,13 @@ final class _MemoryRateCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         child: Column(
           children: [
-            Text('$percentage%', style: Theme
-                .of(context)
-                .textTheme
-                .titleLarge),
+            Text('$percentage%', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 4),
-            Text(label, style: Theme
-                .of(context)
-                .textTheme
-                .bodySmall),
+            Text(label, style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 2),
             Text(
               '${rate.completedReviews} 次',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .labelSmall,
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ],
         ),
@@ -310,10 +294,7 @@ final class _TrendBar extends StatelessWidget {
                 height: height,
                 constraints: const BoxConstraints(minWidth: 8),
                 decoration: BoxDecoration(
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .primary,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(5),
                   ),
@@ -324,10 +305,7 @@ final class _TrendBar extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '${day.date.day}',
-            style: Theme
-                .of(context)
-                .textTheme
-                .labelSmall,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ],
       ),
@@ -346,7 +324,7 @@ final class _CalendarCard extends StatelessWidget {
     final visible = days.length > 84 ? days.sublist(days.length - 84) : days;
     final maxCount = visible.fold<int>(
       1,
-          (max, day) => day.eventCount > max ? day.eventCount : max,
+      (max, day) => day.eventCount > max ? day.eventCount : max,
     );
     return Card(
       child: Padding(
@@ -372,8 +350,8 @@ final class _CalendarCard extends StatelessWidget {
                         color: day.eventCount == 0
                             ? theme.colorScheme.surfaceContainerHighest
                             : theme.colorScheme.primary.withValues(
-                          alpha: 0.25 + day.eventCount / maxCount * 0.75,
-                        ),
+                                alpha: 0.25 + day.eventCount / maxCount * 0.75,
+                              ),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -421,10 +399,7 @@ final class _StatisticsRefreshError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme
-          .of(context)
-          .colorScheme
-          .errorContainer,
+      color: Theme.of(context).colorScheme.errorContainer,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(

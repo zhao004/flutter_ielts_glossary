@@ -4,7 +4,9 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 import '../../models/backup/backup_exceptions.dart';
 import '../../models/backup/backup_snapshot.dart';
+import '../../models/domain/question_config.dart';
 import '../../models/domain/review_rating.dart';
+import '../question/question_config_codec.dart';
 
 /// 负责 data.json 的稳定字段编码与严格解码，不接触文件系统或数据库。
 final class BackupDataCodec {
@@ -126,6 +128,7 @@ final class BackupDataCodec {
         );
       }
     }
+    _validatePracticeConsistency(practiceSessions, practiceAnswers);
     return BackupSnapshot(
       userWordStates: userWordStates,
       favoriteWords: favoriteWords,
@@ -135,6 +138,87 @@ final class BackupDataCodec {
       learningEvents: learningEvents,
       appSettings: appSettings,
     );
+  }
+
+  void _validatePracticeConsistency(
+    List<BackupPracticeSession> sessions,
+    List<BackupPracticeAnswer> answers,
+  ) {
+    final answersBySession = <String, List<BackupPracticeAnswer>>{};
+    for (final answer in answers) {
+      (answersBySession[answer.sessionId] ??= <BackupPracticeAnswer>[]).add(
+        answer,
+      );
+    }
+
+    const configCodec = QuestionConfigCodec();
+    for (final session in sessions) {
+      final QuestionConfig config;
+      try {
+        config = configCodec.decode(session.configJson);
+      } on Object {
+        _throwPracticeConsistency('会话 ${session.id} 的题目配置无法解析');
+      }
+      if (session.type != QuestionTypeStorage.encode(config.type) ||
+          session.totalQuestionCount != config.questionCount) {
+        _throwPracticeConsistency('会话 ${session.id} 的题型或题量与配置不一致');
+      }
+      if (session.correctCount > session.totalQuestionCount) {
+        _throwPracticeConsistency('会话 ${session.id} 的正确数超出题量');
+      }
+      if (session.finishedAt != null &&
+          session.finishedAt!.isBefore(session.startedAt)) {
+        _throwPracticeConsistency('会话 ${session.id} 的结束时间早于开始时间');
+      }
+
+      final sessionAnswers = answersBySession[session.id] ?? const [];
+      if (sessionAnswers.length > session.totalQuestionCount) {
+        _throwPracticeConsistency('会话 ${session.id} 的答案数量超出题量');
+      }
+      if (session.finishedAt == null) {
+        if (session.correctCount != 0 || session.elapsedMilliseconds != 0) {
+          _throwPracticeConsistency('未完成会话 ${session.id} 不应保存完成计数');
+        }
+      } else if (sessionAnswers.length != session.totalQuestionCount) {
+        _throwPracticeConsistency('已完成会话 ${session.id} 的答案数量不足');
+      }
+
+      final answeredWords = <int>{};
+      var correctAnswers = 0;
+      var responseTimeSum = 0;
+      for (final answer in sessionAnswers) {
+        if (!answeredWords.add(answer.wordId)) {
+          _throwPracticeConsistency('会话 ${session.id} 存在重复单词答案');
+        }
+        if (config.isTargeted &&
+            !config.targetWordIds.contains(answer.wordId)) {
+          _throwPracticeConsistency('会话 ${session.id} 的答案不属于定向题目');
+        }
+        if (answer.answeredAt.isBefore(session.startedAt) ||
+            (session.finishedAt != null &&
+                answer.answeredAt.isAfter(session.finishedAt!))) {
+          _throwPracticeConsistency('会话 ${session.id} 的答案时间超出会话范围');
+        }
+        if (answer.isCorrect) {
+          correctAnswers++;
+        }
+        if (session.finishedAt != null) {
+          if (responseTimeSum >
+              session.elapsedMilliseconds - answer.responseTimeMilliseconds) {
+            _throwPracticeConsistency('会话 ${session.id} 的耗时小于答案耗时之和');
+          }
+          responseTimeSum += answer.responseTimeMilliseconds;
+        }
+      }
+      if (session.finishedAt != null &&
+          session.correctCount != correctAnswers) {
+        _throwPracticeConsistency('会话 ${session.id} 的正确数与答案事实不一致');
+      }
+    }
+  }
+
+  Never _throwPracticeConsistency(String message) {
+    throw BackupFormatException('inconsistent_practice_session', message);
   }
 
   Map<String, Object?> _encodeRoot(BackupSnapshot snapshot) {

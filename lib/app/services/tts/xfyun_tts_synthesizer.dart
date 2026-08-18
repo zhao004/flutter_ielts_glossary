@@ -28,6 +28,7 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
   XfyunTtsSynthesizer({
     required this.credentials,
     required this.voice,
+    this.supportedAccent = PronunciationAccent.us,
     this.speed = 50,
     this.volume = 50,
     this.pitch = 50,
@@ -48,6 +49,9 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
 
   final XfyunTtsCredentials credentials;
   final String voice;
+
+  /// 当前 `vcn` 发音人实际支持的口音；讯飞 TTS 不提供请求级口音切换。
+  final PronunciationAccent supportedAccent;
   final int speed;
   final int volume;
   final int pitch;
@@ -62,14 +66,18 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
     if (normalized.isEmpty || normalized.length > 1000) {
       throw const TtsSynthesisException('invalid_text', '待合成文本长度无效');
     }
+    if (accent != supportedAccent) {
+      throw const TtsSynthesisException(
+        'unsupported_accent',
+        '当前讯飞发音人不支持所请求的口音',
+      );
+    }
 
     final url = _buildWebSocketUrl();
     WebSocket? socket;
     try {
       socket = await WebSocket.connect(url).timeout(timeout);
-      final bytes = await _runSession(socket, normalized, accent).timeout(
-        timeout,
-      );
+      final bytes = await _runSession(socket, normalized).timeout(timeout);
       if (bytes.isEmpty) {
         throw const TtsSynthesisException('empty_audio', '讯飞 TTS 返回空音频');
       }
@@ -85,11 +93,7 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
     }
   }
 
-  Future<Uint8List> _runSession(
-    WebSocket socket,
-    String text,
-    PronunciationAccent accent,
-  ) {
+  Future<Uint8List> _runSession(WebSocket socket, String text) {
     final completer = Completer<Uint8List>();
     final chunks = <Uint8List>[];
     late final StreamSubscription<dynamic> subscription;
@@ -144,13 +148,8 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
           'pitch': pitch,
           'tte': 'UTF8',
           'bgs': 0,
-          // reg 控制发音地区：1=美式、2=英式（待核对官方「参数说明」）。
-          'reg': accent == PronunciationAccent.us ? 1 : 2,
         },
-        'data': {
-          'status': 2,
-          'text': base64Encode(utf8.encode(text)),
-        },
+        'data': {'status': 2, 'text': base64Encode(utf8.encode(text))},
       }),
     );
 
@@ -216,12 +215,12 @@ final class XfyunTtsSynthesizer implements TtsSynthesizerPort {
 
   String _buildWebSocketUrl() {
     final date = _httpDate(DateTime.now().toUtc());
-    final signatureOrigin =
-        'host: $host\ndate: $date\nGET $path HTTP/1.1';
+    final signatureOrigin = 'host: $host\ndate: $date\nGET $path HTTP/1.1';
     final signature = base64Encode(
-      Hmac(sha256, utf8.encode(credentials.apiSecret))
-          .convert(utf8.encode(signatureOrigin))
-          .bytes,
+      Hmac(
+        sha256,
+        utf8.encode(credentials.apiSecret),
+      ).convert(utf8.encode(signatureOrigin)).bytes,
     );
     final authorizationOrigin =
         'api_key="${credentials.apiKey}", algorithm="hmac-sha256", '

@@ -56,10 +56,7 @@ void main() {
       Get.find<PronunciationService>(),
       same(dependencies.pronunciationService),
     );
-    expect(
-      Get.find<AudioRecorderPort>(),
-      same(dependencies.audioRecorder),
-    );
+    expect(Get.find<AudioRecorderPort>(), same(dependencies.audioRecorder));
     expect(
       Get.find<PronunciationAssessmentConfigRepository>(),
       same(dependencies.pronunciationAssessmentConfigRepository),

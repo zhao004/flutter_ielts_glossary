@@ -9,9 +9,11 @@ import 'package:flutter_ielts_glossary/app/database/content/content_database.dar
 import 'package:flutter_ielts_glossary/app/database/user/user_database.dart';
 import 'package:flutter_ielts_glossary/app/models/backup/backup_operation.dart';
 import 'package:flutter_ielts_glossary/app/models/backup/backup_snapshot.dart';
+import 'package:flutter_ielts_glossary/app/models/domain/question_config.dart';
 import 'package:flutter_ielts_glossary/app/repositories/local_backup_repository.dart';
 import 'package:flutter_ielts_glossary/app/services/backup/backup_data_codec.dart';
 import 'package:flutter_ielts_glossary/app/services/backup/backup_package_codec.dart';
+import 'package:flutter_ielts_glossary/app/services/question/question_config_codec.dart';
 
 void main() {
   late ContentDatabase contentDatabase;
@@ -98,6 +100,7 @@ void main() {
     String stateEventId = 'event-1',
   }) {
     final time = updatedAt ?? DateTime.utc(2026, 8, 15, 12);
+    final practiceConfig = QuestionConfig.targetedSpelling(wordId: wordId);
     return BackupSnapshot(
       userWordStates: [
         BackupUserWordState(
@@ -134,8 +137,8 @@ void main() {
       practiceSessions: [
         BackupPracticeSession(
           id: 'session-$stateEventId',
-          type: 'choice',
-          configJson: '{}',
+          type: QuestionTypeStorage.encode(practiceConfig.type),
+          configJson: const QuestionConfigCodec().encode(practiceConfig),
           startedAt: time,
           finishedAt: time,
           totalQuestionCount: 1,
@@ -189,6 +192,7 @@ void main() {
 
   test('导出包含全部用户业务表但不嵌套 BackupHistory', () async {
     final now = DateTime.utc(2026, 8, 15, 10);
+    final practiceConfig = QuestionConfig.targetedSpelling(wordId: 1);
     await userDatabase.userDataDao.upsertWordState(
       UserWordStatesCompanion.insert(
         wordId: const Value(1),
@@ -207,9 +211,13 @@ void main() {
     await userDatabase.userDataDao.insertPracticeSession(
       PracticeSessionsCompanion.insert(
         id: 'session-existing',
-        type: 'choice',
-        configJson: '{}',
+        type: QuestionTypeStorage.encode(practiceConfig.type),
+        configJson: const QuestionConfigCodec().encode(practiceConfig),
         startedAt: now,
+        finishedAt: Value(now),
+        totalQuestionCount: const Value(1),
+        correctCount: const Value(1),
+        elapsedMilliseconds: const Value(100),
       ),
     );
     await userDatabase.userDataDao.insertPracticeAnswer(

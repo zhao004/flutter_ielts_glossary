@@ -87,7 +87,9 @@ final class PronunciationPracticeRunState {
           ? this.expectedWord
           : expectedWord as String?,
       accent: accent ?? this.accent,
-      score: identical(score, _unset) ? this.score : score as PronunciationScore?,
+      score: identical(score, _unset)
+          ? this.score
+          : score as PronunciationScore?,
       errorCode: identical(errorCode, _unset)
           ? this.errorCode
           : errorCode as String?,

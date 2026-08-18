@@ -10,8 +10,9 @@ final class AppThemeController extends GetxController {
   AppThemeController({
     required AppThemePreference themePreference,
     required FlexScheme accentPreference,
-  }) : _themePreference = themePreference,
-       _accentPreference = accentPreference;
+  }) : this._(themePreference, accentPreference);
+
+  AppThemeController._(this._themePreference, this._accentPreference);
 
   AppThemePreference _themePreference;
   FlexScheme _accentPreference;

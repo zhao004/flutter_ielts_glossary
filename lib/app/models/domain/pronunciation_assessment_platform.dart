@@ -1,7 +1,8 @@
 /// 发音评测使用的第三方平台；off 表示尚未配置服务。
 enum PronunciationAssessmentPlatform { off, xfyun, youdao }
 
-extension PronunciationAssessmentPlatformLabels on PronunciationAssessmentPlatform {
+extension PronunciationAssessmentPlatformLabels
+    on PronunciationAssessmentPlatform {
   /// 配置页展示的短名称。
   String get label => switch (this) {
     PronunciationAssessmentPlatform.off => '未配置',

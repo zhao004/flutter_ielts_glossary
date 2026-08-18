@@ -24,5 +24,8 @@ final class TtsSynthesisException implements Exception {
 /// 第三方 TTS 合成平台边界，便于纯 Dart 测试和替换网络实现。
 abstract interface class TtsSynthesizerPort {
   /// 把 [text] 合成为 [accent] 对应的音频字节。
-  Future<TtsAudio> synthesize(String text, {required PronunciationAccent accent});
+  Future<TtsAudio> synthesize(
+    String text, {
+    required PronunciationAccent accent,
+  });
 }

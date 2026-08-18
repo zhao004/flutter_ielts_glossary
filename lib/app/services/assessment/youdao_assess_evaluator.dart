@@ -9,7 +9,10 @@ import 'pronunciation_evaluator.dart';
 
 /// 有道智云语音评测的稳定凭据。
 final class YoudaoAssessCredentials {
-  const YoudaoAssessCredentials({required this.appKey, required this.appSecret});
+  const YoudaoAssessCredentials({
+    required this.appKey,
+    required this.appSecret,
+  });
 
   final String appKey;
   final String appSecret;
@@ -45,16 +48,10 @@ final class YoudaoAssessEvaluator implements PronunciationEvaluatorPort {
   ) async {
     final normalizedText = request.referenceText.trim();
     if (normalizedText.isEmpty || normalizedText.length > 200) {
-      throw const PronunciationEvaluationException(
-        'invalid_text',
-        '参考文本长度无效',
-      );
+      throw const PronunciationEvaluationException('invalid_text', '参考文本长度无效');
     }
     if (request.pcmBytes.isEmpty) {
-      throw const PronunciationEvaluationException(
-        'empty_audio',
-        '录音为空，无法评测',
-      );
+      throw const PronunciationEvaluationException('empty_audio', '录音为空，无法评测');
     }
 
     final salt = _randomSalt();
@@ -141,19 +138,26 @@ final class YoudaoAssessEvaluator implements PronunciationEvaluatorPort {
       );
     }
     return PronunciationScore(
-      totalScore: _readScore(result, const ['score', 'totalScore', 'total_score']),
-      accuracyScore: _readScore(
-        result,
-        const ['accuracyScore', 'accuracy', 'accuracy_score'],
-      ),
-      fluencyScore: _readScore(
-        result,
-        const ['fluencyScore', 'fluency', 'fluency_score'],
-      ),
-      integrityScore: _readScore(
-        result,
-        const ['integrityScore', 'integrity', 'integrity_score'],
-      ),
+      totalScore: _readScore(result, const [
+        'score',
+        'totalScore',
+        'total_score',
+      ]),
+      accuracyScore: _readScore(result, const [
+        'accuracyScore',
+        'accuracy',
+        'accuracy_score',
+      ]),
+      fluencyScore: _readScore(result, const [
+        'fluencyScore',
+        'fluency',
+        'fluency_score',
+      ]),
+      integrityScore: _readScore(result, const [
+        'integrityScore',
+        'integrity',
+        'integrity_score',
+      ]),
     );
   }
 
@@ -190,8 +194,8 @@ final class YoudaoAssessEvaluator implements PronunciationEvaluatorPort {
   String _randomSalt() {
     final random = Uint8List(8);
     for (var index = 0; index < random.length; index++) {
-      random[index] = (DateTime.now().microsecondsSinceEpoch >> (index * 4)) &
-          0xFF;
+      random[index] =
+          (DateTime.now().microsecondsSinceEpoch >> (index * 4)) & 0xFF;
     }
     return base64UrlEncode(random).replaceAll('=', '');
   }

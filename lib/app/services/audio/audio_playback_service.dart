@@ -6,11 +6,7 @@ import '../../repositories/tts_config_repository.dart';
 import '../tts/tts_synthesizer_factory.dart';
 
 /// 参考发音最终选择的播放来源。
-enum PronunciationPlaybackSource {
-  localAsset,
-  onlineTts,
-  unavailable,
-}
+enum PronunciationPlaybackSource { localAsset, onlineTts, unavailable }
 
 /// 播放请求经过资源和设备能力判断后的结果。
 final class PronunciationPlaybackResult {
@@ -186,6 +182,7 @@ final class PronunciationService {
   }
 
   Future<void> dispose() async {
+    await ttsSynthesizerFactory.dispose();
     await localPlayer.dispose();
   }
 }

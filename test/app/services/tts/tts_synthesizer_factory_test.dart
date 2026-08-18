@@ -13,19 +13,13 @@ void main() {
     expect(factory.create(TtsConfig.defaults()), isNull);
     expect(
       factory.create(
-        const TtsConfig(
-          platform: TtsPlatform.xfyun,
-          xfyunAppId: 'app',
-        ),
+        const TtsConfig(platform: TtsPlatform.xfyun, xfyunAppId: 'app'),
       ),
       isNull,
     );
     expect(
       factory.create(
-        const TtsConfig(
-          platform: TtsPlatform.youdao,
-          youdaoAppKey: 'key',
-        ),
+        const TtsConfig(platform: TtsPlatform.youdao, youdaoAppKey: 'key'),
       ),
       isNull,
     );

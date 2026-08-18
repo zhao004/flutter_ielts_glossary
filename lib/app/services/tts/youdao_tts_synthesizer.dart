@@ -18,13 +18,14 @@ final class YoudaoTtsCredentials {
 ///
 /// 返回 MP3。有道在线合成仅提供美式音色（`female`/`male`）；
 /// 英式请求抛出异常，由上层报告当前第三方服务不可用。
+/// 默认复用应用级 HTTP Client；显式注入的 Client 仍由调用方负责关闭。
 final class YoudaoTtsSynthesizer implements TtsSynthesizerPort {
   YoudaoTtsSynthesizer({
     required this.credentials,
     required this.voice,
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
-  }) : _client = client ?? http.Client() {
+  }) : _client = client ?? _applicationClient() {
     if (credentials.appKey.trim().isEmpty ||
         credentials.appSecret.trim().isEmpty) {
       throw ArgumentError('有道 TTS 凭据不完整');
@@ -33,11 +34,23 @@ final class YoudaoTtsSynthesizer implements TtsSynthesizerPort {
 
   static const String endpoint = 'https://openapi.youdao.com/ttsapi';
   static const String langType = 'en';
+  static http.Client? _sharedClient;
 
   final YoudaoTtsCredentials credentials;
   final String voice;
   final http.Client _client;
   final Duration timeout;
+
+  /// 应用退出或语音服务生命周期结束时释放共享连接池。
+  static Future<void> closeSharedClient() async {
+    final client = _sharedClient;
+    _sharedClient = null;
+    client?.close();
+  }
+
+  static http.Client _applicationClient() {
+    return _sharedClient ??= http.Client();
+  }
 
   @override
   Future<TtsAudio> synthesize(
@@ -49,10 +62,7 @@ final class YoudaoTtsSynthesizer implements TtsSynthesizerPort {
       throw const TtsSynthesisException('invalid_text', '待合成文本长度无效');
     }
     if (accent == PronunciationAccent.uk) {
-      throw const TtsSynthesisException(
-        'unsupported_accent',
-        '有道 TTS 仅支持美式发音',
-      );
+      throw const TtsSynthesisException('unsupported_accent', '有道 TTS 仅支持美式发音');
     }
 
     final salt = _randomSalt();
@@ -106,8 +116,7 @@ final class YoudaoTtsSynthesizer implements TtsSynthesizerPort {
   }
 
   bool _isAudio(http.Response response) {
-    final contentType =
-        response.headers['content-type'] ?? ''.toLowerCase();
+    final contentType = response.headers['content-type'] ?? ''.toLowerCase();
     return contentType.contains('audio') || contentType.contains('mpeg');
   }
 

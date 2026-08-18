@@ -17,8 +17,9 @@ class AppSettings extends Table {
 
   TextColumn get themeMode => text().withLength(min: 4, max: 6)();
 
-  TextColumn get accentColor =>
-      text().withLength(min: 3, max: 32).withDefault(const Constant('indigo'))();
+  TextColumn get accentColor => text()
+      .withLength(min: 3, max: 32)
+      .withDefault(const Constant('indigo'))();
 
   IntColumn get updatedAt =>
       integer().map(const UtcDateTimeMillisecondsConverter())();

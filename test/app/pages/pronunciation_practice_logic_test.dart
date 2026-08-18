@@ -75,7 +75,10 @@ void main() {
     addTearDown(deniedLogic.onClose);
 
     await deniedLogic.prepare(expectedWord: 'alpha');
-    expect(deniedLogic.state.phase, PronunciationPracticePhase.permissionDenied);
+    expect(
+      deniedLogic.state.phase,
+      PronunciationPracticePhase.permissionDenied,
+    );
     expect(
       deniedLogic.state.errorCode,
       PronunciationPracticeErrorCodes.microphonePermissionDenied,

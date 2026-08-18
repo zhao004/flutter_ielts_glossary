@@ -131,9 +131,7 @@ void main() {
     final logic = _createLogic(
       clock: _FakeMonotonicClock(),
       candidates: _candidates(5, withAudio: true),
-      pronunciationService: PronunciationService(
-        localPlayer: localPlayer,
-      ),
+      pronunciationService: PronunciationService(localPlayer: localPlayer),
     );
     addTearDown(logic.onClose);
 

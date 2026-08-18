@@ -84,7 +84,8 @@ final class BackupPackageCodec {
           '备份 ZIP 只能包含 manifest.json 和 data.json 各一份',
         );
       }
-      final content = file.content;
+      final remainingLimit = maxDecompressedBytes - decompressedBytes;
+      final content = _readEntryContent(file, remainingLimit);
       decompressedBytes += content.length;
       if (decompressedBytes > maxDecompressedBytes ||
           content.length > maxDecompressedBytes) {
@@ -148,6 +149,47 @@ final class BackupPackageCodec {
       dataBytes: Uint8List.fromList(dataBytes),
       isFutureFormat: false,
     );
+  }
+
+  List<int> _readEntryContent(ArchiveFile file, int remainingLimit) {
+    final declaredSize = file.size;
+    if (declaredSize < 0 || declaredSize > remainingLimit) {
+      throw const BackupFormatException(
+        'decompressed_too_large',
+        '备份解压后超过大小上限',
+      );
+    }
+
+    final output = _BoundedOutputStream(
+      remainingLimit,
+      initialSize: declaredSize < _BoundedOutputStream.defaultBufferSize
+          ? declaredSize
+          : _BoundedOutputStream.defaultBufferSize,
+    );
+    try {
+      // 先校验 ZIP 声明长度，再通过受限输出流解压，避免高压缩比条目一次性扩容。
+      file.decompress(output);
+      output.flush();
+      final content = output.getBytes();
+      if (content.length != declaredSize) {
+        throw const BackupFormatException(
+          'invalid_zip',
+          'ZIP 条目声明长度与实际解压长度不一致',
+        );
+      }
+      return Uint8List.fromList(content);
+    } on BackupFormatException {
+      rethrow;
+    } on _DecompressionLimitExceeded {
+      throw const BackupFormatException(
+        'decompressed_too_large',
+        '备份解压后超过大小上限',
+      );
+    } on Object {
+      throw const BackupFormatException('invalid_zip', '备份 ZIP 条目无法解压');
+    } finally {
+      output.clear();
+    }
   }
 
   /// 在后台 Isolate 完成 ZIP、哈希和 JSON 解析，再在当前 Isolate 恢复领域对象。
@@ -340,4 +382,42 @@ final class DecodedBackupPackage {
   final BackupSnapshot? snapshot;
   final Uint8List dataBytes;
   final bool isFutureFormat;
+}
+
+final class _DecompressionLimitExceeded implements Exception {
+  const _DecompressionLimitExceeded();
+}
+
+final class _BoundedOutputStream extends OutputMemoryStream {
+  _BoundedOutputStream(this.maxBytes, {int? initialSize})
+    : super(size: initialSize ?? defaultBufferSize);
+
+  static const int defaultBufferSize = 32 * 1024;
+
+  final int maxBytes;
+
+  void _checkAdditional(int count) {
+    if (count < 0 || length > maxBytes - count) {
+      throw const _DecompressionLimitExceeded();
+    }
+  }
+
+  @override
+  void writeByte(int value) {
+    _checkAdditional(1);
+    super.writeByte(value);
+  }
+
+  @override
+  void writeBytes(List<int> bytes, {int? length}) {
+    final count = length ?? bytes.length;
+    _checkAdditional(count);
+    super.writeBytes(bytes, length: count);
+  }
+
+  @override
+  void writeStream(InputStream stream) {
+    _checkAdditional(stream.length);
+    super.writeStream(stream);
+  }
 }

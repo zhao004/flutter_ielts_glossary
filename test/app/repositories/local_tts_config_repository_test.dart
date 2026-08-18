@@ -76,9 +76,7 @@ void main() {
     );
 
     await expectLater(
-      repository().save(
-        TtsConfig(platform: TtsPlatform.xfyun, speed: 101),
-      ),
+      repository().save(TtsConfig(platform: TtsPlatform.xfyun, speed: 101)),
       throwsA(isA<UnsupportedTtsConfigException>()),
     );
   });

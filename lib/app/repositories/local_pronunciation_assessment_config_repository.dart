@@ -18,8 +18,7 @@ final class LocalPronunciationAssessmentConfigRepository
     implements PronunciationAssessmentConfigRepository {
   LocalPronunciationAssessmentConfigRepository({
     AssessmentConfigDirectoryProvider? directoryProvider,
-  }) : directoryProvider =
-           directoryProvider ?? getApplicationSupportDirectory;
+  }) : directoryProvider = directoryProvider ?? getApplicationSupportDirectory;
 
   static const String configFileName = 'pronunciation_assessment_config.json';
   static const int maxCredentialLength = 128;
@@ -93,9 +92,7 @@ final class LocalPronunciationAssessmentConfigRepository
     try {
       decoded = jsonDecode(source);
     } on FormatException {
-      throw const UnsupportedAssessmentConfigException(
-        '配置文件不是合法 JSON',
-      );
+      throw const UnsupportedAssessmentConfigException('配置文件不是合法 JSON');
     }
     if (decoded is! Map<String, Object?>) {
       throw const UnsupportedAssessmentConfigException('配置文件必须是 JSON 对象');
@@ -110,9 +107,7 @@ final class LocalPronunciationAssessmentConfigRepository
     };
     if (decoded.keys.toSet().length != keys.length ||
         !decoded.keys.toSet().containsAll(keys)) {
-      throw const UnsupportedAssessmentConfigException(
-        '配置文件字段集合不匹配协议',
-      );
+      throw const UnsupportedAssessmentConfigException('配置文件字段集合不匹配协议');
     }
     final platform = _decodePlatform(decoded['platform']);
     final config = PronunciationAssessmentConfig(
@@ -147,9 +142,7 @@ final class LocalPronunciationAssessmentConfigRepository
       (platform) => platform.name == value,
     );
     if (match.isEmpty) {
-      throw const UnsupportedAssessmentConfigException(
-        'platform 不是受支持的值',
-      );
+      throw const UnsupportedAssessmentConfigException('platform 不是受支持的值');
     }
     return match.first;
   }
@@ -168,9 +161,7 @@ final class LocalPronunciationAssessmentConfigRepository
         config.xfyunApiSecret.length > maxCredentialLength ||
         config.youdaoAppKey.length > maxCredentialLength ||
         config.youdaoAppSecret.length > maxCredentialLength) {
-      throw const UnsupportedAssessmentConfigException(
-        '评测配置字段长度超出允许范围',
-      );
+      throw const UnsupportedAssessmentConfigException('评测配置字段长度超出允许范围');
     }
   }
 }

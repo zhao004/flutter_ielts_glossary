@@ -62,6 +62,7 @@ final class LocalUserDatabaseRecovery implements UserDatabaseRecovery {
     );
     final suffix = _suffix(_clock().toUtc());
     final backupFiles = <File>[];
+    final movedFiles = <({String sourcePath, String targetPath})>[];
     try {
       await recoveryDirectory.create(recursive: true);
       for (final artifact in databaseArtifacts) {
@@ -75,15 +76,32 @@ final class LocalUserDatabaseRecovery implements UserDatabaseRecovery {
           suffix: suffix,
         );
         await source.rename(target.path);
+        movedFiles.add((sourcePath: source.path, targetPath: target.path));
         backupFiles.add(target);
       }
-    } on FileSystemException catch (error) {
+    } on Object catch (error) {
+      await _rollbackMoves(movedFiles);
+      final errorCode = error is FileSystemException
+          ? error.osError?.errorCode ?? 'unknown'
+          : 'unknown';
       throw UserDatabaseRecoveryException(
         'backup_failed',
-        '用户库备份失败：${error.osError?.errorCode ?? 'unknown'}',
+        '用户库备份失败：$errorCode',
       );
     }
     return UserDatabaseRecoveryResult(backupFiles: backupFiles);
+  }
+
+  Future<void> _rollbackMoves(
+    List<({String sourcePath, String targetPath})> movedFiles,
+  ) async {
+    for (final move in movedFiles.reversed) {
+      try {
+        await File(move.targetPath).rename(move.sourcePath);
+      } on Object {
+        // 回滚失败时保留原始错误码；恢复目录中的文件仍可供人工取证。
+      }
+    }
   }
 
   Future<File> _nextTarget({

@@ -97,10 +97,7 @@ class AppPages {
       page: () => const BackupPage(),
       binding: BackupBinding(),
     ),
-    GetPage(
-      name: _Paths.colorSchemes,
-      page: () => const ColorSchemePage(),
-    ),
+    GetPage(name: _Paths.colorSchemes, page: () => const ColorSchemePage()),
     GetPage(
       name: _Paths.speechServices,
       page: () => const SpeechServicesConfigPage(),

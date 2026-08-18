@@ -4,8 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_ielts_glossary/app/models/backup/backup_exceptions.dart';
 import 'package:flutter_ielts_glossary/app/models/backup/backup_snapshot.dart';
+import 'package:flutter_ielts_glossary/app/models/domain/question_config.dart';
 import 'package:flutter_ielts_glossary/app/models/domain/review_rating.dart';
 import 'package:flutter_ielts_glossary/app/services/backup/backup_data_codec.dart';
+import 'package:flutter_ielts_glossary/app/services/question/question_config_codec.dart';
 
 void main() {
   const codec = BackupDataCodec();
@@ -13,6 +15,7 @@ void main() {
   final second = first.add(const Duration(minutes: 5));
 
   BackupSnapshot createSnapshot({bool includeSettings = true}) {
+    final practiceConfig = QuestionConfig.targetedSpelling(wordId: 2);
     return BackupSnapshot(
       userWordStates: [
         BackupUserWordState(
@@ -49,8 +52,8 @@ void main() {
       practiceSessions: [
         BackupPracticeSession(
           id: 'session-1',
-          type: 'choice',
-          configJson: '{}',
+          type: QuestionTypeStorage.encode(practiceConfig.type),
+          configJson: const QuestionConfigCodec().encode(practiceConfig),
           startedAt: first,
           finishedAt: second,
           totalQuestionCount: 1,
@@ -155,6 +158,37 @@ void main() {
     expect(
       () => codec.decode(jsonEncode(nonUtc)),
       throwsA(isA<BackupFormatException>()),
+    );
+  });
+
+  test('拒绝配置、计数和时间范围不一致的练习会话', () {
+    Matcher inconsistentSession() => isA<BackupFormatException>().having(
+      (error) => error.code,
+      'code',
+      'inconsistent_practice_session',
+    );
+
+    final invalidConfig = jsonDecode(codec.encode(createSnapshot())) as Map;
+    (invalidConfig['practiceSessions'] as List).single['configJson'] = '{}';
+    expect(
+      () => codec.decode(jsonEncode(invalidConfig)),
+      throwsA(inconsistentSession()),
+    );
+
+    final invalidCount = jsonDecode(codec.encode(createSnapshot())) as Map;
+    (invalidCount['practiceSessions'] as List).single['correctCount'] = 0;
+    expect(
+      () => codec.decode(jsonEncode(invalidCount)),
+      throwsA(inconsistentSession()),
+    );
+
+    final invalidAnswerTime = jsonDecode(codec.encode(createSnapshot())) as Map;
+    (invalidAnswerTime['practiceAnswers'] as List).single['answeredAt'] = second
+        .add(const Duration(seconds: 1))
+        .toIso8601String();
+    expect(
+      () => codec.decode(jsonEncode(invalidAnswerTime)),
+      throwsA(inconsistentSession()),
     );
   });
 

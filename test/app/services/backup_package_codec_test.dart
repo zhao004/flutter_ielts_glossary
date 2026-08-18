@@ -132,6 +132,28 @@ void main() {
     );
   });
 
+  test('按 ZIP 声明长度在解压内容前拒绝超限条目', () {
+    final source = codec.encode(
+      appVersion: '1.0.0',
+      userSchemaVersion: 1,
+      contentVersion: 'content-v1',
+      exportedAt: DateTime.utc(2026, 8, 15),
+      snapshot: snapshot,
+    );
+    const limited = BackupPackageCodec(maxDecompressedBytes: 32);
+
+    expect(
+      () => limited.decode(source),
+      throwsA(
+        isA<BackupFormatException>().having(
+          (error) => error.code,
+          'code',
+          'decompressed_too_large',
+        ),
+      ),
+    );
+  });
+
   test('高于当前协议的包可只读预览但默认拒绝导入', () {
     final source = codec.encode(
       appVersion: '1.0.0',

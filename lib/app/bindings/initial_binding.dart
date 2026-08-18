@@ -55,10 +55,7 @@ final class InitialBinding extends Bindings {
         appDependencies.pronunciationService,
         permanent: true,
       )
-      ..put<AudioRecorderPort>(
-        appDependencies.audioRecorder,
-        permanent: true,
-      )
+      ..put<AudioRecorderPort>(appDependencies.audioRecorder, permanent: true)
       ..put<PronunciationAssessmentConfigRepository>(
         appDependencies.pronunciationAssessmentConfigRepository,
         permanent: true,
