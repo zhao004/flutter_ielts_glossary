@@ -69,6 +69,15 @@ final class _PracticePageState extends State<PracticePage> {
                 onPressed: _leaveFlow,
                 icon: const Icon(Icons.arrow_back),
               ),
+              actions: [
+                GetBuilder<PracticeSessionLogic>(
+                  id: PracticeSessionLogic.contentUpdateId,
+                  builder: (session) => _PracticeFavoriteButton(
+                    state: session.state,
+                    onToggleFavorite: session.toggleCurrentWordFavorite,
+                  ),
+                ),
+              ],
             ),
             body: SafeArea(
               top: false,
@@ -86,7 +95,6 @@ final class _PracticePageState extends State<PracticePage> {
                   onStart: setup.start,
                   onSubmitChoice: session.submitChoice,
                   onSubmitText: session.submitText,
-                  onToggleFavorite: session.toggleCurrentWordFavorite,
                   onPlayPronunciation: session.playCurrentPronunciation,
                   onStopPronunciation: session.stopPronunciation,
                   onNext: session.next,
@@ -133,7 +141,6 @@ final class _PracticeBody extends StatelessWidget {
     required this.onStart,
     required this.onSubmitChoice,
     required this.onSubmitText,
-    required this.onToggleFavorite,
     required this.onPlayPronunciation,
     required this.onStopPronunciation,
     required this.onNext,
@@ -152,7 +159,6 @@ final class _PracticeBody extends StatelessWidget {
   final Future<void> Function() onStart;
   final Future<void> Function(String optionId) onSubmitChoice;
   final Future<void> Function(String answer) onSubmitText;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent})
   onPlayPronunciation;
   final Future<void> Function() onStopPronunciation;
@@ -174,7 +180,6 @@ final class _PracticeBody extends StatelessWidget {
         state: session,
         onSubmitChoice: onSubmitChoice,
         onSubmitText: onSubmitText,
-        onToggleFavorite: onToggleFavorite,
         onPlayPronunciation: onPlayPronunciation,
         onStopPronunciation: onStopPronunciation,
         onNext: onNext,
@@ -688,7 +693,6 @@ final class _PracticeSessionBody extends StatelessWidget {
     required this.state,
     required this.onSubmitChoice,
     required this.onSubmitText,
-    required this.onToggleFavorite,
     required this.onPlayPronunciation,
     required this.onStopPronunciation,
     required this.onNext,
@@ -699,7 +703,6 @@ final class _PracticeSessionBody extends StatelessWidget {
   final PracticeRunState state;
   final Future<void> Function(String optionId) onSubmitChoice;
   final Future<void> Function(String answer) onSubmitText;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent})
   onPlayPronunciation;
   final Future<void> Function() onStopPronunciation;
@@ -748,7 +751,6 @@ final class _PracticeSessionBody extends StatelessWidget {
       question: question,
       onSubmitChoice: onSubmitChoice,
       onSubmitText: onSubmitText,
-      onToggleFavorite: onToggleFavorite,
       onPlayPronunciation: onPlayPronunciation,
       onStopPronunciation: onStopPronunciation,
       onNext: onNext,
@@ -763,7 +765,6 @@ final class _PracticeQuestionBody extends StatefulWidget {
     required this.question,
     required this.onSubmitChoice,
     required this.onSubmitText,
-    required this.onToggleFavorite,
     required this.onPlayPronunciation,
     required this.onStopPronunciation,
     required this.onNext,
@@ -773,7 +774,6 @@ final class _PracticeQuestionBody extends StatefulWidget {
   final QuizQuestion question;
   final Future<void> Function(String optionId) onSubmitChoice;
   final Future<void> Function(String answer) onSubmitText;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent})
   onPlayPronunciation;
   final Future<void> Function() onStopPronunciation;
@@ -895,24 +895,6 @@ final class _PracticeQuestionBodyState extends State<_PracticeQuestionBody> {
         if (isFeedback && response != null) ...[
           const SizedBox(height: 16),
           _FeedbackCard(question: question, response: response),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: state.isUpdatingCurrentWordFavorite
-                ? null
-                : widget.onToggleFavorite,
-            icon: state.isUpdatingCurrentWordFavorite
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(
-                    state.isCurrentWordFavorite
-                        ? Icons.star
-                        : Icons.star_border,
-                  ),
-            label: Text(state.isCurrentWordFavorite ? '已收藏当前单词' : '收藏当前单词'),
-          ),
           if (state.favoriteErrorCode != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -938,6 +920,36 @@ final class _PracticeQuestionBodyState extends State<_PracticeQuestionBody> {
           ),
         ],
       ],
+    );
+  }
+}
+
+final class _PracticeFavoriteButton extends StatelessWidget {
+  const _PracticeFavoriteButton({
+    required this.state,
+    required this.onToggleFavorite,
+  });
+
+  final PracticeRunState state;
+  final Future<void> Function() onToggleFavorite;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state.phase != PracticeRunPhase.feedback ||
+        state.currentQuestion == null) {
+      return const SizedBox.shrink();
+    }
+    return IconButton(
+      key: const ValueKey('practice-favorite'),
+      onPressed: state.isUpdatingCurrentWordFavorite ? null : onToggleFavorite,
+      tooltip: state.isCurrentWordFavorite ? '取消收藏当前单词' : '收藏当前单词',
+      icon: state.isUpdatingCurrentWordFavorite
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(state.isCurrentWordFavorite ? Icons.star : Icons.star_border),
     );
   }
 }

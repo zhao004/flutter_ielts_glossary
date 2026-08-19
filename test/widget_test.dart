@@ -457,14 +457,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('英译中'), findsOneWidget);
+    expect(find.byKey(const ValueKey('practice-favorite')), findsNothing);
     for (var index = 0; index < 5; index++) {
       await tester.tap(find.byType(OutlinedButton).first);
       await tester.pumpAndSettle();
       if (index == 0) {
-        expect(find.text('收藏当前单词'), findsOneWidget);
-        await tester.tap(find.text('收藏当前单词'));
+        final favorite = _expectPracticeFavoriteInAppBar(tester);
+        await tester.tap(favorite);
         await tester.pumpAndSettle();
-        expect(find.text('已收藏当前单词'), findsOneWidget);
+        expect(tester.widget<IconButton>(favorite).tooltip, '取消收藏当前单词');
+        await tester.binding.setSurfaceSize(const Size(375, 812));
+        tester.platformDispatcher.textScaleFactorTestValue = 1.4;
+        await tester.pumpAndSettle();
+        _expectPracticeFavoriteInAppBar(tester);
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: '练习反馈页在窄屏放大字体下不应发生布局异常。',
+        );
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+        await tester.binding.setSurfaceSize(const Size(800, 900));
+        await tester.pumpAndSettle();
       }
       if (index < 4) {
         await tester.tap(find.text('下一题'));
@@ -506,6 +519,11 @@ void main() {
     await tester.tap(find.text('播放发音'));
     await tester.pumpAndSettle();
     expect(find.text('播放发音'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'incorrect');
+    await tester.tap(find.text('提交答案'));
+    await tester.pumpAndSettle();
+    _expectPracticeFavoriteInAppBar(tester);
   });
 
   testWidgets('练习页面的例句填空可以逐级显示首字母提示', (tester) async {
@@ -532,6 +550,11 @@ void main() {
     await tester.tap(find.textContaining('首字母 w'));
     await tester.pumpAndSettle();
     expect(find.text('💡 提示：w____'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'incorrect');
+    await tester.tap(find.text('确认答案'));
+    await tester.pumpAndSettle();
+    _expectPracticeFavoriteInAppBar(tester);
   });
 
   testWidgets('复习页面在没有到期单词时显示空状态', (tester) async {
@@ -907,6 +930,20 @@ void main() {
     expect(find.text('尚未配置第三方评测'), findsOneWidget);
     expect(find.text('前往配置'), findsOneWidget);
   });
+}
+
+Finder _expectPracticeFavoriteInAppBar(WidgetTester tester) {
+  final favorite = find.byKey(const ValueKey('practice-favorite'));
+  expect(favorite, findsOneWidget);
+  expect(find.text('收藏当前单词'), findsNothing);
+  expect(find.text('已收藏当前单词'), findsNothing);
+
+  final appBarRect = tester.getRect(find.byType(AppBar));
+  final favoriteRect = tester.getRect(favorite);
+  expect(favoriteRect.top, greaterThanOrEqualTo(appBarRect.top));
+  expect(favoriteRect.bottom, lessThanOrEqualTo(appBarRect.bottom));
+  expect(favoriteRect.center.dx, greaterThan(appBarRect.center.dx));
+  return favorite;
 }
 
 Future<void> _seedWordDetailsContent(ContentDatabase database) async {
