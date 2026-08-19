@@ -377,8 +377,47 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('academic'), findsOneWidget);
 
+    final favorite = find.byKey(const ValueKey('study-favorite'));
+    expect(favorite, findsOneWidget);
+    expect(tester.widget<IconButton>(favorite).tooltip, '收藏单词');
+    final appBarRect = tester.getRect(find.byType(AppBar));
+    final favoriteRect = tester.getRect(favorite);
+    expect(favoriteRect.top, greaterThanOrEqualTo(appBarRect.top));
+    expect(favoriteRect.bottom, lessThanOrEqualTo(appBarRect.bottom));
+    expect(favoriteRect.center.dx, greaterThan(appBarRect.center.dx));
+
+    final ukAudio = find.byKey(const ValueKey('study-pronunciation-uk'));
+    final usAudio = find.byKey(const ValueKey('study-pronunciation-us'));
+    final pronunciationPractice = find.byKey(
+      const ValueKey('study-pronunciation-practice'),
+    );
+    for (final buttonFinder in [ukAudio, usAudio, pronunciationPractice]) {
+      final button = tester.widget<TextButton>(buttonFinder);
+      expect(button.style?.shape?.resolve({}), isA<StadiumBorder>());
+    }
+
+    await tester.binding.setSurfaceSize(const Size(375, 812));
+    tester.platformDispatcher.textScaleFactorTestValue = 1.4;
+    await tester.pumpAndSettle();
+    final ukAudioRect = tester.getRect(ukAudio);
+    final usAudioRect = tester.getRect(usAudio);
+    final pronunciationPracticeRect = tester.getRect(pronunciationPractice);
+    expect(ukAudioRect.center.dy, closeTo(usAudioRect.center.dy, 0.01));
+    expect(
+      ukAudioRect.center.dy,
+      closeTo(pronunciationPracticeRect.center.dy, 0.01),
+    );
+    expect(tester.takeException(), isNull, reason: '翻卡学习操作区在窄屏放大字体下不应发生布局异常。');
+    tester.platformDispatcher.clearTextScaleFactorTestValue();
+    await tester.binding.setSurfaceSize(const Size(800, 900));
+    await tester.pumpAndSettle();
+
+    await tester.tap(favorite);
+    await tester.pumpAndSettle();
+    expect(tester.widget<IconButton>(favorite).tooltip, '取消收藏');
+
     expect(find.text('发音练习'), findsOneWidget);
-    await tester.tap(find.text('发音练习'));
+    await tester.tap(pronunciationPractice);
     await tester.pumpAndSettle();
     expect(find.text('尚未配置第三方评测'), findsOneWidget);
     await tester.binding.handlePopRoute();

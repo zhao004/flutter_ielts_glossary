@@ -41,6 +41,15 @@ final class _StudyPageState extends State<StudyPage> {
             onPressed: _leaveFlow,
             icon: const Icon(Icons.arrow_back),
           ),
+          actions: [
+            GetBuilder<StudySessionLogic>(
+              id: StudySessionLogic.contentUpdateId,
+              builder: (session) => _StudyFavoriteButton(
+                state: session.state,
+                onToggleFavorite: session.toggleCurrentWordFavorite,
+              ),
+            ),
+          ],
         ),
         body: SafeArea(
           top: false,
@@ -60,7 +69,6 @@ final class _StudyPageState extends State<StudyPage> {
                 onRate: session.rate,
                 onPrevious: session.previous,
                 onNext: session.next,
-                onToggleFavorite: session.toggleCurrentWordFavorite,
                 onPlay: session.playCurrentPronunciation,
                 onStop: session.stopPronunciation,
                 onPronunciationPractice: (word) async {
@@ -102,7 +110,6 @@ final class _StudyBody extends StatelessWidget {
     required this.onRate,
     required this.onPrevious,
     required this.onNext,
-    required this.onToggleFavorite,
     required this.onPlay,
     required this.onStop,
     required this.onPronunciationPractice,
@@ -120,7 +127,6 @@ final class _StudyBody extends StatelessWidget {
   final Future<void> Function(StudyRating rating) onRate;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent}) onPlay;
   final Future<void> Function() onStop;
   final Future<void> Function(String word) onPronunciationPractice;
@@ -146,7 +152,6 @@ final class _StudyBody extends StatelessWidget {
         onRate: onRate,
         onPrevious: onPrevious,
         onNext: onNext,
-        onToggleFavorite: onToggleFavorite,
         onPlay: onPlay,
         onStop: onStop,
         onPronunciationPractice: onPronunciationPractice,
@@ -428,7 +433,6 @@ final class _StudySessionBody extends StatelessWidget {
     required this.onRate,
     required this.onPrevious,
     required this.onNext,
-    required this.onToggleFavorite,
     required this.onPlay,
     required this.onStop,
     required this.onPronunciationPractice,
@@ -441,7 +445,6 @@ final class _StudySessionBody extends StatelessWidget {
   final Future<void> Function(StudyRating rating) onRate;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent}) onPlay;
   final Future<void> Function() onStop;
   final Future<void> Function(String word) onPronunciationPractice;
@@ -473,7 +476,6 @@ final class _StudySessionBody extends StatelessWidget {
       onRate: onRate,
       onPrevious: onPrevious,
       onNext: onNext,
-      onToggleFavorite: onToggleFavorite,
       onPlay: onPlay,
       onStop: onStop,
       onPronunciationPractice: onPronunciationPractice,
@@ -489,7 +491,6 @@ final class _StudyCardBody extends StatelessWidget {
     required this.onRate,
     required this.onPrevious,
     required this.onNext,
-    required this.onToggleFavorite,
     required this.onPlay,
     required this.onStop,
     required this.onPronunciationPractice,
@@ -501,7 +502,6 @@ final class _StudyCardBody extends StatelessWidget {
   final Future<void> Function(StudyRating rating) onRate;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
-  final Future<void> Function() onToggleFavorite;
   final Future<void> Function({PronunciationAccent? accent}) onPlay;
   final Future<void> Function() onStop;
   final Future<void> Function(String word) onPronunciationPractice;
@@ -561,31 +561,39 @@ final class _StudyCardBody extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: OutlinedButton.icon(
-                onPressed: state.isUpdatingCurrentWordFavorite
-                    ? null
-                    : onToggleFavorite,
-                icon: Icon(
-                  state.isCurrentWordFavorite ? Icons.star : Icons.star_border,
-                ),
-                label: Text(state.isCurrentWordFavorite ? '已收藏' : '收藏'),
+              flex: 2,
+              child: _StudyAudioButton(
+                accent: PronunciationAccent.uk,
+                selectedAccent: state.audioAccent,
+                isPlaying: state.audioPhase == StudyAudioPhase.playing,
+                onPlay: onPlay,
+                onStop: onStop,
               ),
             ),
             const SizedBox(width: 8),
-            _StudyAudioButton(
-              accent: PronunciationAccent.uk,
-              selectedAccent: state.audioAccent,
-              isPlaying: state.audioPhase == StudyAudioPhase.playing,
-              onPlay: onPlay,
-              onStop: onStop,
+            Expanded(
+              flex: 2,
+              child: _StudyAudioButton(
+                accent: PronunciationAccent.us,
+                selectedAccent: state.audioAccent,
+                isPlaying: state.audioPhase == StudyAudioPhase.playing,
+                onPlay: onPlay,
+                onStop: onStop,
+              ),
             ),
             const SizedBox(width: 8),
-            _StudyAudioButton(
-              accent: PronunciationAccent.us,
-              selectedAccent: state.audioAccent,
-              isPlaying: state.audioPhase == StudyAudioPhase.playing,
-              onPlay: onPlay,
-              onStop: onStop,
+            Expanded(
+              flex: 3,
+              child: _StudyActionPill(
+                buttonKey: const ValueKey('study-pronunciation-practice'),
+                label: '发音练习',
+                tooltip: '进入发音练习',
+                icon: Icons.mic_outlined,
+                emphasized: true,
+                onPressed: busy
+                    ? null
+                    : () => onPronunciationPractice(details.word),
+              ),
             ),
           ],
         ),
@@ -603,12 +611,6 @@ final class _StudyCardBody extends StatelessWidget {
               style: theme.textTheme.bodySmall,
             ),
           ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: busy ? null : () => onPronunciationPractice(details.word),
-          icon: const Icon(Icons.mic_outlined),
-          label: const Text('发音练习'),
-        ),
         if (state.errorCode != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
@@ -783,10 +785,103 @@ final class _StudyAudioButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCurrent = selectedAccent == accent;
     final label = accent == PronunciationAccent.uk ? 'UK' : 'US';
+    final active = isPlaying && isCurrent;
+    return _StudyActionPill(
+      buttonKey: ValueKey('study-pronunciation-${accent.name}'),
+      label: label,
+      tooltip: active ? '停止 $label 发音' : '播放 $label 发音',
+      icon: active ? Icons.stop : Icons.volume_up,
+      active: active,
+      onPressed: active ? onStop : () => onPlay(accent: accent),
+    );
+  }
+}
+
+final class _StudyActionPill extends StatelessWidget {
+  const _StudyActionPill({
+    required this.buttonKey,
+    required this.label,
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+    this.active = false,
+    this.emphasized = false,
+  });
+
+  final Key buttonKey;
+  final String label;
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final bool active;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final highlighted = active || emphasized;
+    final foreground = highlighted
+        ? theme.colorScheme.primary
+        : theme.appTextSecondary;
+    final background = highlighted
+        ? theme.colorScheme.primaryContainer
+        : theme.appSubtleSurface;
+    final border = highlighted
+        ? theme.colorScheme.primary.withValues(alpha: 0.28)
+        : theme.appBorder;
+    return Tooltip(
+      message: tooltip,
+      child: TextButton.icon(
+        key: buttonKey,
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          minimumSize: const Size(0, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          foregroundColor: foreground,
+          backgroundColor: background,
+          side: BorderSide(color: border),
+          shape: const StadiumBorder(),
+          textStyle: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        icon: Icon(icon, size: 18),
+        label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      ),
+    );
+  }
+}
+
+final class _StudyFavoriteButton extends StatelessWidget {
+  const _StudyFavoriteButton({
+    required this.state,
+    required this.onToggleFavorite,
+  });
+
+  final StudyRunState state;
+  final Future<void> Function() onToggleFavorite;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasActiveCard =
+        state.currentCandidate != null &&
+        (state.phase == StudyRunPhase.answering ||
+            state.phase == StudyRunPhase.persisting ||
+            state.phase == StudyRunPhase.rating);
+    if (!hasActiveCard) {
+      return const SizedBox.shrink();
+    }
     return IconButton(
-      onPressed: isPlaying && isCurrent ? onStop : () => onPlay(accent: accent),
-      tooltip: '$label 发音',
-      icon: Icon(isPlaying && isCurrent ? Icons.stop : Icons.volume_up),
+      key: const ValueKey('study-favorite'),
+      onPressed: state.isUpdatingCurrentWordFavorite ? null : onToggleFavorite,
+      tooltip: state.isCurrentWordFavorite ? '取消收藏' : '收藏单词',
+      icon: state.isUpdatingCurrentWordFavorite
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(state.isCurrentWordFavorite ? Icons.star : Icons.star_border),
     );
   }
 }
