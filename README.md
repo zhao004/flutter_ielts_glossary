@@ -1,89 +1,124 @@
 # 雅思词汇库
 
-基于 Flutter 的本地优先雅思词汇学习应用。项目将词库内容与用户学习数据分库存储，覆盖查词、随机学习、专项练习、间隔复习、收藏、统计、备份和发音练习等核心流程。
+基于 Flutter 的本地优先雅思词汇学习应用。词库内容、学习记录和核心练习流程均可在设备本地运行；只有配置可选的第三方语音服务时，才会发起网络请求。
 
-完整的产品范围、数据模型和阶段验收标准见 [项目规划](flutter-project-plan.md)。
+## 项目概览
 
-## 核心能力
+应用将只读词库与可写的用户学习数据分离存储，围绕查词、学习、练习、复习和数据迁移组织学习流程。
 
-| 模块 | 当前能力 |
+| 场景 | 当前能力 |
 | --- | --- |
-| 词库 | 词频组、首字母和掌握等级筛选，FTS5 中英文搜索，排序、分页与单词详情 |
-| 学习 | 随机抽词、翻卡、自评、收藏、UK/US 发音，以及学习进度持久化 |
-| 练习 | 选择题、中文拼写、音标拼写、听音拼写和例句填空，支持提示、判题与错题优先 |
-| 复习 | 六级间隔调度、到期队列、记得/忘记反馈和记忆率统计 |
-| 个人数据 | 单词与例句收藏、学习趋势、活动日历、每日目标、主题和强调色设置 |
-| 备份 | 版本化 ZIP 备份、SHA-256 完整性校验、导入预检，以及合并或覆盖恢复 |
-| 语音 | 词库本地音频播放、可选第三方 TTS，以及可选第三方发音评测 |
+| 查词与词条 | 按词频组、首字母和掌握等级筛选；支持 FTS5 中英文搜索、排序、分页和单词详情。 |
+| 学习与复习 | 随机抽词、翻卡、自评、收藏和学习进度持久化；使用六级间隔调度生成到期复习队列。 |
+| 专项练习 | 英译中选择、中文/音标/释义/听音拼写和例句填空；支持提示、判题与错题优先。 |
+| 学习记录 | 单词与例句收藏、学习趋势、活动日历、每日目标、主题和强调色。 |
+| 数据迁移 | 版本化 ZIP 备份、SHA-256 完整性校验、导入预检，以及合并或覆盖恢复。 |
+| 语音 | 优先播放随包 UK/US 音频；无本地音频时可配置科大讯飞或有道的 TTS；发音练习可接入对应的第三方评测服务。 |
 
-应用启动时会校验并安装随包词库，不依赖在线接口完成核心学习流程。备份包当前未加密，请勿通过不可信渠道传输。
+> 备份文件当前未加密。请勿通过不可信渠道传输，且不要将第三方服务凭据写入源码、测试数据或提交记录。
 
-## 技术架构
+## 运行应用
 
-- Flutter `3.44.9`、Dart `^3.12.2`。
-- GetX 负责路由、页面状态和依赖绑定。
-- Drift 管理 SQLite 数据访问，内容库使用 FTS5 全文索引。
-- `ContentDatabase` 是只读内容库，`UserDatabase` 保存可写的学习记录、收藏、设置和备份历史。
-- Repository 组合两个数据库的数据，页面 Logic 不直接依赖 Drift 实现。
-- `just_audio`、`record` 与 HTTP/WebSocket 服务适配器提供发音播放和第三方评测能力。
+### 环境要求
 
-主要目录：
+- Flutter `3.44.9` stable；项目 SDK 约束为 Dart `^3.12.2`。
+- 已配置 Android 或 iOS 的 Flutter 开发环境，并连接设备或启动模拟器。
 
-```text
-lib/
-  app/
-    bootstrap/      应用初始化与依赖装配
-    database/       内容库、用户库及 DAO
-    models/         领域模型与备份模型
-    pages/          页面、Logic 与 Binding
-    repositories/   数据访问边界及本地实现
-    services/       内容安装、复习、出题、备份、音频和语音服务
-    theme/          主题与强调色
-    widgets/        应用级复用组件
-assets/data/        随包词库、内容清单与构建报告
-tool/               词库构建和独立校验 CLI
-test/               单元、Repository、Widget 与导航流程测试
-```
+### 首次运行
 
-## 快速开始
-
-安装 Flutter `3.44.9` stable，并准备 Android 或 iOS 开发环境。然后执行：
+在项目根目录执行：
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-仓库已经包含运行所需的 Drift 与 JSON 生成代码。修改数据库表、DAO 或 JSON 模型后，重新生成代码：
+首次启动时，应用会校验 `assets/data/` 中的内容清单和 SQLite 词库，将内容安装到应用支持目录，再创建用户学习数据库。初始化失败会停留在恢复界面，不会以不完整的本地依赖进入业务页面。
+
+当前随包快照不含 UK/US 本地音频。要使用发音播放或云端评测，请在应用的语音服务设置中填写已授权服务的凭据，并授予麦克风权限；未配置时不影响查词、学习、练习和复习。
+
+## 开发与验证
+
+### 生成代码
+
+仓库已包含所需的 Drift 生成文件。修改数据库表、DAO 或带有生成注解的模型后，重新生成代码；不要手工编辑 `*.g.dart`：
 
 ```bash
 dart run build_runner build
 ```
 
-首次启动会将 `assets/data/` 中的内容库复制到应用支持目录并校验版本和 SHA-256。初始化失败时应用停留在恢复界面，不会带着不完整依赖进入业务页面。
+### 常用验证命令
 
-词库未提供音频时，发音播放需要先配置第三方 TTS；发音评测始终需要配置第三方服务并授予麦克风权限。当前随包资产不含 UK/US 本地音频。
+按变更范围选择执行。提交前通常至少运行格式检查、静态分析和直接相关的测试。
+
+| 目的 | 命令 |
+| --- | --- |
+| 检查 Dart 格式 | `dart format --output=none --set-exit-if-changed lib tool test` |
+| 静态分析 | `flutter analyze` |
+| 运行全部测试 | `flutter test` |
+| 验证打包词库 | `dart run tool/verify_content_database.dart --directory assets/data` |
+| 验证主导航流程 | `flutter test test/app/core_navigation_test.dart` |
+| 验证窄屏、字体放大和深色主题 | `flutter test test/app/responsive_layout_test.dart` |
+
+持续集成会执行格式检查、分析、测试和词库校验，配置见 [Flutter validation 工作流](.github/workflows/flutter.yml)。
+
+## 架构与目录
+
+页面通过 GetX 的 Binding 和 Logic 获取领域能力，页面层不直接访问 Drift。Repository 负责组合两个数据库中的数据，Service 承载内容安装、复习排程、出题、备份和语音等跨页面能力。
+
+```text
+Page / Logic / Binding
+          |
+   Repository + Service
+       |           |
+ContentDatabase   UserDatabase
+  只读词库         可写学习数据
+```
+
+主要目录如下：
+
+```text
+lib/
+  main.dart              应用入口
+  app/
+    bootstrap/           启动初始化、依赖装配与恢复流程
+    database/            内容库、用户库、表定义和 DAO
+    models/              领域模型、内容模型和备份模型
+    pages/               页面、GetX Logic 与 Binding
+    repositories/        数据访问接口及本地实现
+    routes/              路由名称与页面注册
+    services/            内容、复习、出题、备份、音频和语音服务
+    theme/               主题与强调色
+    widgets/             应用级复用组件
+assets/
+  data/                  随包 SQLite 词库、内容清单和构建报告
+  design/icons/          SVG 图标资源
+tool/                     词库构建与独立校验 CLI
+test/                     单元、Repository、Widget 和导航流程测试
+```
+
+`ContentDatabase` 只保存词条、例句和搜索索引；`UserDatabase` 保存学习状态、收藏、练习记录、设置与备份历史。内容更新或用户数据恢复不会直接覆盖另一类数据库。
 
 ## 词库数据
 
-当前随包快照的信息来自 [内容清单](assets/data/content_manifest.json)：
+当前随包词库的信息来自 [内容清单](assets/data/content_manifest.json)：
 
 | 项目 | 值 |
 | --- | --- |
-| 来源 | `chunsi-w/ielts-vocab-cloudflare` 的 `public/data` |
-| 来源提交 | `2278d049dacca60181aea4cba3deae1546a63381` |
 | 内容版本 | `2026.08.16-2278d049` |
-| 单词 | 34,211 |
-| 例句 | 76,332 |
+| 词库来源 | [chunsi-w/ielts-vocab-cloudflare](https://github.com/chunsi-w/ielts-vocab-cloudflare) 的 `public/data` |
+| 冻结来源提交 | `2278d049dacca60181aea4cba3deae1546a63381` |
+| 单词数 | 34,211 |
+| 例句数 | 76,332 |
 | 有效词频组 | 6 |
 
-来源的 `stats.json` 比实际分块多记录 1 个单词，另有 140 条例句目标词形无法形成独立词边界。构建器仅在来源整体 SHA-256 和警告计数完全匹配时保留这些已知问题；运行时会排除不合格的例句填空候选。分类结果见 [内容构建报告](assets/data/content_build_report.json)。
+构建报告位于 [content_build_report.json](assets/data/content_build_report.json)。来源统计中存在 1 条单词数差异、1 条分组数差异和 140 条无法形成独立目标词边界的例句；构建器只会在来源整体 SHA-256 与警告计数完全匹配时保留这些已审计问题。运行时会排除不合格的例句填空候选。
 
-公开分发前仍需单独确认词库、例句、记忆法和音频的授权范围。构建器要求显式传入授权或署名文件，不会下载来源中的远程音频。
+公开分发前，应单独确认词库、例句、记忆法和音频的授权范围。构建器要求显式提供授权或署名文件，也不会下载来源仓库中的远程音频。
 
-### 复现当前内容库
+### 更新或复现词库
 
-先准备对应来源提交的 `public/data` 和已确认的授权说明文件，再执行：
+准备与上述提交一致的 `public/data` 目录，以及已经确认授权范围的说明文件，然后在项目根目录运行：
 
 ```bash
 dart run tool/build_content_database.dart \
@@ -101,43 +136,29 @@ dart run tool/build_content_database.dart \
   --overwrite
 ```
 
-`--generated-at` 固定来源提交时间，使同一来源和配置可以生成字节级一致的数据库、清单和报告。`--overwrite` 只会在新产物完整通过校验后原子替换现有文件。
+固定 `--generated-at` 后，使用相同来源与配置可以生成字节级一致的数据库、清单和报告。`--overwrite` 只会在新产物完整通过校验后原子替换现有文件。
 
-独立复核构建产物：
+构建完成后独立复核产物：
 
 ```bash
 dart run tool/verify_content_database.dart --directory assets/data
 ```
 
-如需接入已授权的本地音频，同时提供 `--audio-map-file` 和 `--audio-directory`；可用参数及约束以 CLI 帮助为准：
+如需接入已授权的本地音频，必须同时提供 `--audio-map-file` 和 `--audio-directory`，并将最终音频资源按 Flutter 资产规则加入工程。可用参数及约束以 CLI 帮助为准：
 
 ```bash
 dart run tool/build_content_database.dart --help
 ```
 
-## 开发与验证
+## 数据与隐私
 
-按变更范围选择项目已有的验证命令：
-
-```bash
-dart format --output=none --set-exit-if-changed lib tool test
-flutter analyze
-flutter test
-dart run tool/verify_content_database.dart --directory assets/data
-```
-
-关键宿主 Widget 流程可以单独运行：
-
-```bash
-flutter test test/app/core_navigation_test.dart
-flutter test test/app/responsive_layout_test.dart
-```
-
-GitHub Actions 的验证配置见 [Flutter validation 工作流](.github/workflows/flutter.yml)。
+- 学习数据、收藏、设置和备份历史保存在用户数据库中；词库内容位于独立的只读内容库。
+- 导出的备份包包含业务学习数据，不包含 TTS 或发音评测的第三方凭据。
+- 选择云端 TTS 或发音评测后，相关文本或录音会按所选服务的协议发送到第三方；使用前应确认其服务条款和隐私政策。
+- 用户数据库无法打开时，应用可先将旧数据库备份到应用私有目录，再创建空学习数据；之后可通过备份恢复记录。
 
 ## 当前边界
 
-- 核心页面已接入真实 Logic、Repository、路由和本地数据库，不使用示例学习数据代替正式流程。
-- 页面测试覆盖主要业务路径、`375 x 812` 窄屏、`1.4` 倍系统字体和深色主题；这不能替代真机安全区与系统字体渲染验收。
-- 系统文件选择、分享、麦克风权限，以及第三方 TTS 和评测服务仍需在目标 Android/iOS 设备上验收。
-- 当前仓库未配置设备级 `integration_test/` 套件，也未包含本地发音音频资产。
+- 核心页面已接入真实 Logic、Repository、路由和本地数据库，不使用示例学习数据替代正式流程。
+- 测试覆盖主要业务路径、`375 x 812` 窄屏、`1.4` 倍系统字体和深色主题；仍需在目标 Android/iOS 设备上完成安全区、文件选择、分享、麦克风权限及系统字体渲染验收。
+- 仓库尚未提供设备级 `integration_test/` 自动化流程，也未随包分发本地发音音频。
