@@ -11,6 +11,7 @@ import '../../models/domain/question_config.dart';
 import '../../models/domain/quiz_question.dart';
 import '../../routes/app_route_names.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_count_button.dart';
 import '../shell/main_shell_controller.dart';
 import 'practice_session_logic.dart';
 import 'practice_setup_logic.dart';
@@ -19,7 +20,7 @@ import 'practice_setup_logic.dart';
 class PracticePage extends StatefulWidget {
   const PracticePage({super.key, this.autoStart = false});
 
-  /// 例句填空从学习中心直接进入会话，其他题型保留设置页。
+  /// 定向拼写等不需要配置的流程可以直接启动会话。
   final bool autoStart;
 
   @override
@@ -237,6 +238,7 @@ final class _PracticeSetupBody extends StatelessWidget {
     }
     final theme = Theme.of(context);
     final isSpelling = config.type == QuestionType.spelling;
+    final isCloze = config.type == QuestionType.cloze;
     final canEdit =
         state.phase == PracticeSetupPhase.editing ||
         state.phase == PracticeSetupPhase.insufficientCandidates ||
@@ -248,35 +250,41 @@ final class _PracticeSetupBody extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
       children: [
-        Text(
-          isSpelling ? '根据提示，输入正确的英文单词' : '四选一，测试词汇掌握度',
-          style: theme.textTheme.bodyMedium,
-        ),
+        Text(switch (config.type) {
+          QuestionType.spelling => '根据提示，输入正确的英文单词',
+          QuestionType.cloze => '根据例句语境，补全挖空的目标词形',
+          _ => '四选一，测试词汇掌握度',
+        }, style: theme.textTheme.bodyMedium),
         const SizedBox(height: 23),
-        _PracticeSectionLabel(title: isSpelling ? '提示类型' : '题型'),
-        const SizedBox(height: 10),
-        if (isSpelling)
-          _SpellingPromptOptions(
-            selected: config.spellingPromptType!,
-            enabled: canEdit,
-            onChanged: onSetSpellingPrompt,
-          )
-        else
-          _QuizTypeOptions(
-            selected: config.type,
-            enabled: canEdit,
-            onChanged: onSelectType,
-          ),
-        const SizedBox(height: 20),
+        if (!isCloze) ...[
+          _PracticeSectionLabel(title: isSpelling ? '提示类型' : '题型'),
+          const SizedBox(height: 10),
+          if (isSpelling)
+            _SpellingPromptOptions(
+              selected: config.spellingPromptType!,
+              enabled: canEdit,
+              onChanged: onSetSpellingPrompt,
+            )
+          else
+            _QuizTypeOptions(
+              selected: config.type,
+              enabled: canEdit,
+              onChanged: onSelectType,
+            ),
+          const SizedBox(height: 20),
+        ],
         _PracticeSectionLabel(title: isSpelling ? '单词数量' : '题目数量'),
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
             final itemWidth = (constraints.maxWidth - 27) / 4;
+            final suggestedCounts = isCloze
+                ? const [5, 10, 20, 30]
+                : const [10, 20, 30, 40];
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                for (final count in const [10, 20, 30, 40])
+                for (final count in suggestedCounts)
                   _PracticeCountButton(
                     width: itemWidth,
                     count: count,
@@ -290,7 +298,19 @@ final class _PracticeSetupBody extends StatelessWidget {
             );
           },
         ),
-        if (!isSpelling) ...[
+        const SizedBox(height: 10),
+        CustomCountButton(
+          key: const ValueKey('practice-custom-question-count'),
+          value: config.questionCount,
+          minimum: state.minimumQuestionCount,
+          maximum: state.maximumQuestionCount,
+          unit: isSpelling ? '个' : '题',
+          dialogTitle: isSpelling ? '自定义单词数量' : '自定义题目数量',
+          fieldLabel: isSpelling ? '本次练习单词数' : '本次练习题数',
+          enabled: canEdit,
+          onChanged: onSetQuestionCount,
+        ),
+        if (!isSpelling && !isCloze) ...[
           const SizedBox(height: 20),
           Row(
             children: [
@@ -363,6 +383,8 @@ final class _PracticeSetupBody extends StatelessWidget {
                       ? '重试练习'
                       : isSpelling
                       ? '开始拼写'
+                      : isCloze
+                      ? '开始填空'
                       : '开始答题',
                 ),
                 const SizedBox(width: 3),

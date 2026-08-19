@@ -52,6 +52,9 @@ void main() {
     expect(logic.state.config.frequencyGroupIds, {1, 3});
     expect(logic.state.config.difficulty, isNull);
 
+    logic.setQuestionCount(17);
+    expect(logic.state.config.questionCount, 17);
+
     final validConfig = logic.state.config;
     expect(() => logic.selectFrequencyGroups(const {7}), throwsArgumentError);
     expect(logic.state.config, same(validConfig));

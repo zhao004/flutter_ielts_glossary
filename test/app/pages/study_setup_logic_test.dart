@@ -62,10 +62,10 @@ void main() {
     await logic.load();
 
     logic.selectFrequencyGroups(const {1, 3, 5});
-    logic.setWordCount(30);
+    logic.setWordCount(37);
 
     expect(logic.state.config?.frequencyGroupIds, {1, 3, 5});
-    expect(logic.state.config?.wordCount, 30);
+    expect(logic.state.config?.wordCount, 37);
     expect(settingsRepository.updateCalls, 0);
 
     final validConfig = logic.state.config;

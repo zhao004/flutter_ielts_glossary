@@ -74,7 +74,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRouteNames.practiceCloze,
-      page: () => const PracticePage(autoStart: true),
+      page: () => const PracticePage(),
       binding: PracticeBinding(
         initialConfig: QuestionConfig(
           type: QuestionType.cloze,

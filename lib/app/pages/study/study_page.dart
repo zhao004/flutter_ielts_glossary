@@ -11,6 +11,7 @@ import '../../models/domain/study_setup_state.dart';
 import '../../models/domain/word_details.dart';
 import '../../routes/app_route_names.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_count_button.dart';
 import '../shell/main_shell_controller.dart';
 import 'study_session_logic.dart';
 import 'study_setup_logic.dart';
@@ -269,12 +270,24 @@ final class _StudySetupBody extends StatelessWidget {
                     width: width,
                     label: '$count',
                     selected: config.wordCount == count,
-                    enabled: canEdit && count != 50,
+                    enabled: canEdit,
                     onPressed: () => onSetWordCount(count),
                   ),
               ],
             );
           },
+        ),
+        const SizedBox(height: 10),
+        CustomCountButton(
+          key: const ValueKey('study-custom-word-count'),
+          value: config.wordCount,
+          minimum: StudyConfig.minimumWordCount,
+          maximum: StudyConfig.maximumWordCount,
+          unit: '个',
+          dialogTitle: '自定义单词数量',
+          fieldLabel: '本次学习单词数',
+          enabled: canEdit,
+          onChanged: onSetWordCount,
         ),
         if (state.phase == StudySetupPhase.insufficientCandidates) ...[
           const SizedBox(height: 16),

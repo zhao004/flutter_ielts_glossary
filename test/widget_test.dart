@@ -368,6 +368,14 @@ void main() {
     await tester.tap(find.text('翻卡学习'));
     await tester.pumpAndSettle();
     expect(find.text('翻卡查看释义，按掌握程度评分'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('study-custom-word-count')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('custom-count-input')),
+      '20',
+    );
+    await tester.tap(find.text('保存'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('开始学习'));
     await tester.pumpAndSettle();
@@ -449,10 +457,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('选择题'), findsOneWidget);
 
-    await tester.tap(find.text('开始答题'));
+    await tester.tap(
+      find.byKey(const ValueKey('practice-custom-question-count')),
+    );
     await tester.pumpAndSettle();
-    expect(find.text('改为练习 5 题'), findsOneWidget);
-    await tester.tap(find.text('改为练习 5 题'));
+    await tester.enterText(
+      find.byKey(const ValueKey('custom-count-input')),
+      '5',
+    );
+    await tester.tap(find.text('保存'));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('开始答题'));
     await tester.pumpAndSettle();
 
@@ -511,6 +526,16 @@ void main() {
     await tester.pumpWidget(const GetMaterialApp(home: PracticePage()));
     await tester.pumpAndSettle();
     expect(find.text('拼写练习'), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('practice-custom-question-count')),
+    );
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('custom-count-input')),
+      '5',
+    );
+    await tester.tap(find.text('保存'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('开始拼写'));
     await tester.pumpAndSettle();
 
@@ -540,9 +565,21 @@ void main() {
       initialConfig: QuestionConfig(type: QuestionType.cloze, questionCount: 5),
     ).dependencies();
 
-    await tester.pumpWidget(
-      const GetMaterialApp(home: PracticePage(autoStart: true)),
+    await tester.pumpWidget(const GetMaterialApp(home: PracticePage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('例句填空'), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('practice-custom-question-count')),
     );
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('custom-count-input')),
+      '5',
+    );
+    await tester.tap(find.text('保存'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('开始填空'));
     await tester.pumpAndSettle();
 
     expect(find.text('根据语境填入正确词形'), findsOneWidget);
@@ -555,6 +592,30 @@ void main() {
     await tester.tap(find.text('确认答案'));
     await tester.pumpAndSettle();
     _expectPracticeFavoriteInAppBar(tester);
+  });
+
+  testWidgets('例句填空入口先展示题量配置再开始练习', (tester) async {
+    final dependencies = await createTestAppDependencies();
+    addTearDown(() async {
+      Get.reset();
+      await dependencies.close();
+    });
+    await _seedPracticeContent(dependencies.contentDatabase);
+
+    await tester.pumpWidget(IeltsGlossaryApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('开始学习'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('例句填空'));
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, AppRouteNames.practiceCloze);
+    expect(
+      find.byKey(const ValueKey('practice-custom-question-count')),
+      findsOneWidget,
+    );
+    expect(find.text('开始填空'), findsOneWidget);
+    expect(find.text('根据语境填入正确词形'), findsNothing);
   });
 
   testWidgets('复习页面在没有到期单词时显示空状态', (tester) async {
