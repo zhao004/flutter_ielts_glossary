@@ -4,7 +4,7 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 
 import '../../database/content/content_database.dart';
-import '../audio/audio_playback_service.dart';
+import '../audio/audio_asset_path_policy.dart';
 import 'content_validation.dart';
 
 /// 只读检查内容库中的本地音频路径是否存在于最终资源目录。

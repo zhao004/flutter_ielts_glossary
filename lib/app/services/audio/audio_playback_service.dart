@@ -4,6 +4,9 @@ import '../../models/domain/app_settings_state.dart';
 import '../../models/domain/tts_config.dart';
 import '../../repositories/tts_config_repository.dart';
 import '../tts/tts_synthesizer_factory.dart';
+import 'audio_asset_path_policy.dart';
+
+export 'audio_asset_path_policy.dart';
 
 /// 参考发音最终选择的播放来源。
 enum PronunciationPlaybackSource { localAsset, onlineTts, unavailable }
@@ -44,48 +47,6 @@ abstract interface class LocalAudioPlayer {
   Future<void> stop();
 
   Future<void> dispose();
-}
-
-/// 校验内容清单提供的本地音频路径，拒绝任意文件系统路径。
-final class AudioAssetPathPolicy {
-  const AudioAssetPathPolicy();
-
-  static const String assetRoot = 'assets/audio/';
-  static const Set<String> supportedAccents = {'uk', 'us'};
-  static const Set<String> supportedExtensions = {'.mp3', '.m4a', '.aac'};
-
-  /// 校验资源路径，并在传入口音时确保目录与数据库字段一致。
-  bool isAllowed(String? path, {String? accent}) {
-    if (path == null || path.isEmpty || path.length > 255) {
-      return false;
-    }
-    if (!path.startsWith(assetRoot) ||
-        path.contains('..') ||
-        path.contains('\\') ||
-        path.contains('//')) {
-      return false;
-    }
-
-    final relativePath = path.substring(assetRoot.length).split('/');
-    if (relativePath.length < 2 ||
-        relativePath.any(
-          (segment) => segment.isEmpty || segment == '.' || segment == '..',
-        ) ||
-        !supportedAccents.contains(relativePath.first) ||
-        (accent != null &&
-            (!supportedAccents.contains(accent) ||
-                relativePath.first != accent))) {
-      return false;
-    }
-
-    final extensionStart = path.lastIndexOf('.');
-    if (extensionStart <= assetRoot.length ||
-        extensionStart == path.length - 1) {
-      return false;
-    }
-    final extension = path.substring(extensionStart).toLowerCase();
-    return supportedExtensions.contains(extension);
-  }
 }
 
 /// 统一编排词库本地音频、第三方 TTS 和播放前停止旧音频的服务。
