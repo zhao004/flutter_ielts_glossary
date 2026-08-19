@@ -296,6 +296,11 @@ final class LocalBackupRepository
         .toList(growable: false);
   }
 
+  @override
+  Future<void> deleteHistoryRecord(String id) async {
+    await _userDatabase.userDataDao.deleteBackupHistoryById(id);
+  }
+
   Future<BackupExport> _createExport({
     required String type,
     required bool recordHistory,

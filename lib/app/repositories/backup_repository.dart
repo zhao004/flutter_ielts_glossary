@@ -20,6 +20,9 @@ abstract interface class BackupRepository {
     int limit = 20,
     int offset = 0,
   });
+
+  /// 幂等删除单条备份历史记录，不删除已保存或已分享的备份文件。
+  Future<void> deleteHistoryRecord(String id);
 }
 
 /// 具备保护备份前提下清除用户业务数据的可选仓储能力。

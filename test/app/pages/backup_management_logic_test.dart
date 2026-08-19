@@ -37,6 +37,32 @@ void main() {
     expect(logic.historyState.records, [_history]);
   });
 
+  test('删除历史记录成功后移除当前项，失败时保留原记录并标记对应错误', () async {
+    final repository = _FakeBackupRepository()
+      ..history = [_history, _secondHistory];
+    final logic = BackupManagementLogic(
+      backupRepository: repository,
+      transferService: _FakeTransferService(),
+      autoLoadHistory: false,
+    );
+    addTearDown(logic.onClose);
+
+    await logic.loadHistory();
+    await logic.deleteHistoryRecord(_history.id);
+
+    expect(repository.deletedHistoryIds, [_history.id]);
+    expect(logic.historyState.phase, BackupHistoryPhase.loaded);
+    expect(logic.historyState.records, [_secondHistory]);
+    expect(logic.historyState.deletingRecordId, isNull);
+
+    repository.failDeleteHistory = true;
+    await logic.deleteHistoryRecord(_secondHistory.id);
+
+    expect(logic.historyState.records, [_secondHistory]);
+    expect(logic.historyState.errorCode, BackupHistoryErrorCodes.deleteFailed);
+    expect(logic.historyState.errorRecordId, _secondHistory.id);
+  });
+
   test('导出成功只保留清单摘要、调用系统分享并刷新历史', () async {
     final repository = _FakeBackupRepository()..history = [_history];
     final transfer = _FakeTransferService();
@@ -126,8 +152,10 @@ void main() {
 final class _FakeBackupRepository implements BackupRepository {
   bool failExport = false;
   bool failHistory = false;
+  bool failDeleteHistory = false;
   int exportCount = 0;
   List<BackupHistoryRecord> history = [];
+  final List<String> deletedHistoryIds = [];
   Completer<void>? exportEntered;
   Completer<void>? _exportRelease;
 
@@ -157,6 +185,15 @@ final class _FakeBackupRepository implements BackupRepository {
       throw Exception('history failed');
     }
     return history.take(limit).toList(growable: false);
+  }
+
+  @override
+  Future<void> deleteHistoryRecord(String id) async {
+    deletedHistoryIds.add(id);
+    if (failDeleteHistory) {
+      throw Exception('delete history failed');
+    }
+    history = history.where((record) => record.id != id).toList();
   }
 
   @override
@@ -235,6 +272,15 @@ final _history = BackupHistoryRecord(
   summaryJson: '{}',
   result: 'success',
   occurredAt: DateTime.utc(2026, 8, 15),
+);
+
+final _secondHistory = BackupHistoryRecord(
+  id: 'history-2',
+  type: 'import',
+  fileName: 'imported.ieltsbackup',
+  summaryJson: '{}',
+  result: 'success',
+  occurredAt: DateTime.utc(2026, 8, 14),
 );
 
 const _emptyCounts = BackupRecordCounts(

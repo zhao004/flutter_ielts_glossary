@@ -61,6 +61,7 @@ enum BackupHistoryPhase { idle, loading, loaded, empty, error }
 /// 历史列表使用独立错误码，加载失败不覆盖导出或导入结果。
 abstract final class BackupHistoryErrorCodes {
   static const String loadFailed = 'backup_history_load_failed';
+  static const String deleteFailed = 'backup_history_delete_failed';
 }
 
 /// 最近备份操作历史；刷新期间保留上一份列表。
@@ -69,6 +70,8 @@ final class BackupHistoryRunState {
     required this.phase,
     required List<BackupHistoryRecord> records,
     required this.errorCode,
+    required this.deletingRecordId,
+    required this.errorRecordId,
   }) : records = List<BackupHistoryRecord>.unmodifiable(records);
 
   factory BackupHistoryRunState.idle() {
@@ -76,17 +79,23 @@ final class BackupHistoryRunState {
       phase: BackupHistoryPhase.idle,
       records: const [],
       errorCode: null,
+      deletingRecordId: null,
+      errorRecordId: null,
     );
   }
 
   final BackupHistoryPhase phase;
   final List<BackupHistoryRecord> records;
   final String? errorCode;
+  final String? deletingRecordId;
+  final String? errorRecordId;
 
   BackupHistoryRunState copyWith({
     BackupHistoryPhase? phase,
     List<BackupHistoryRecord>? records,
     Object? errorCode = _unset,
+    Object? deletingRecordId = _unset,
+    Object? errorRecordId = _unset,
   }) {
     return BackupHistoryRunState(
       phase: phase ?? this.phase,
@@ -94,6 +103,12 @@ final class BackupHistoryRunState {
       errorCode: identical(errorCode, _unset)
           ? this.errorCode
           : errorCode as String?,
+      deletingRecordId: identical(deletingRecordId, _unset)
+          ? this.deletingRecordId
+          : deletingRecordId as String?,
+      errorRecordId: identical(errorRecordId, _unset)
+          ? this.errorRecordId
+          : errorRecordId as String?,
     );
   }
 }

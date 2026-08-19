@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
@@ -57,10 +58,56 @@ void main() {
     await tester.pump();
     expect(repository.importModes, [BackupImportMode.overwrite]);
   });
+
+  testWidgets('顶部使用原生 Material 3 AppBar，最近备份记录可确认删除', (tester) async {
+    final dependencies = await createTestAppDependencies();
+    final repository = _PageBackupRepository()..history = [_history];
+    final transfer = _PageBackupTransferService();
+    addTearDown(() async {
+      Get.reset();
+      await transfer.dispose();
+      await dependencies.close();
+    });
+
+    InitialBinding(dependencies).dependencies();
+    Get.replace<BackupRepository>(repository);
+    Get.replace<BackupTransferService>(transfer);
+    BackupBinding().dependencies();
+
+    await tester.pumpWidget(const GetMaterialApp(home: BackupPage()));
+    await tester.pumpAndSettle();
+
+    final appBar = tester.widget<AppBar>(find.byType(AppBar));
+    expect(appBar.backgroundColor, isNull);
+    expect(appBar.centerTitle, isNull);
+    expect(appBar.systemOverlayStyle, isNull);
+    expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+    expect(find.byIcon(Icons.home_outlined), findsOneWidget);
+
+    final delete = find.byKey(
+      const ValueKey('backup-history-delete-history-1'),
+    );
+    expect(delete, findsOneWidget);
+    expect(tester.widget<IconButton>(delete).onPressed, isNotNull);
+    await tester.drag(find.byType(ListView), const Offset(0, -400));
+    await tester.pumpAndSettle();
+    await tester.tap(delete);
+    await tester.pumpAndSettle();
+    expect(find.text('删除备份记录？'), findsOneWidget);
+    expect(find.text('仅删除此历史记录，不会删除已保存或已分享的备份文件。'), findsOneWidget);
+
+    await tester.tap(find.text('删除'));
+    await tester.pumpAndSettle();
+    expect(repository.deletedHistoryIds, ['history-1']);
+    expect(find.text(_history.fileName), findsNothing);
+    expect(find.text('还没有备份操作记录。'), findsOneWidget);
+  });
 }
 
 final class _PageBackupRepository implements BackupRepository {
   final List<BackupImportMode> importModes = [];
+  List<BackupHistoryRecord> history = [];
+  final List<String> deletedHistoryIds = [];
 
   @override
   Future<BackupExport> exportBackup() => throw UnimplementedError();
@@ -70,7 +117,13 @@ final class _PageBackupRepository implements BackupRepository {
     int limit = 20,
     int offset = 0,
   }) async {
-    return const [];
+    return history.take(limit).toList(growable: false);
+  }
+
+  @override
+  Future<void> deleteHistoryRecord(String id) async {
+    deletedHistoryIds.add(id);
+    history = history.where((record) => record.id != id).toList();
   }
 
   @override
@@ -147,6 +200,15 @@ final _manifest = BackupManifest(
   recordCounts: _counts,
   dataSha256:
       '0000000000000000000000000000000000000000000000000000000000000000',
+);
+
+final _history = BackupHistoryRecord(
+  id: 'history-1',
+  type: 'export',
+  fileName: 'history-export.ieltsbackup',
+  summaryJson: '{}',
+  result: 'success',
+  occurredAt: DateTime.utc(2026, 8, 15),
 );
 
 const _emptyCounts = BackupRecordCounts(

@@ -264,6 +264,49 @@ void main() {
     expect((await createRepository().findHistory()).single.type, 'export');
   });
 
+  test('删除备份历史只移除指定记录，并保持用户学习数据', () async {
+    final now = DateTime.utc(2026, 8, 15, 10);
+    await userDatabase.userDataDao.upsertWordState(
+      UserWordStatesCompanion.insert(
+        wordId: const Value(1),
+        studiedCount: const Value(1),
+        updatedAt: now,
+      ),
+    );
+    await userDatabase.userDataDao.insertBackupHistory(
+      BackupHistoryCompanion.insert(
+        id: 'history-delete',
+        type: 'export',
+        fileName: 'delete.ieltsbackup',
+        summaryJson: '{}',
+        result: 'success',
+        occurredAt: now,
+      ),
+    );
+    await userDatabase.userDataDao.insertBackupHistory(
+      BackupHistoryCompanion.insert(
+        id: 'history-retain',
+        type: 'import',
+        fileName: 'retain.ieltsbackup',
+        summaryJson: '{}',
+        result: 'success',
+        occurredAt: now.subtract(const Duration(minutes: 1)),
+      ),
+    );
+    final repository = createRepository();
+
+    await repository.deleteHistoryRecord('history-delete');
+    await repository.deleteHistoryRecord('history-delete');
+
+    expect((await repository.findHistory()).map((record) => record.id), [
+      'history-retain',
+    ]);
+    expect(
+      await userDatabase.userDataDao.findWordState(1),
+      isNot(equals(null)),
+    );
+  });
+
   test('预检报告缺失内容 ID 和现有冲突但不写入数据库', () async {
     final repository = createRepository();
     final preview = await repository.previewImport(

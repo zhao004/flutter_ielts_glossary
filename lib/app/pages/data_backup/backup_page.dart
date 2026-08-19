@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../models/backup/backup_operation.dart';
@@ -13,66 +12,56 @@ import '../shell/main_shell_controller.dart';
 import 'backup_import_logic.dart';
 import 'backup_management_logic.dart';
 
-/// 数据备份页面，保留真实导入导出流程并按 Figma 状态稿组织信息层级。
+/// 数据备份页面，使用 Material 3 顶部栏承载导入、导出与历史管理。
 class BackupPage extends StatelessWidget {
   const BackupPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-      child: Scaffold(
-        backgroundColor: theme.appPageBackground,
-        appBar: AppBar(
-          backgroundColor: theme.appPageBackground,
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              if (Navigator.of(context).canPop()) {
-                Get.back<void>();
-              } else {
-                Get.find<MainShellController>().switchToSettings();
-              }
-            },
-            tooltip: '返回',
-            icon: const AppSvgIcon(AppIconAssets.backupBack, size: 24),
-          ),
-          title: Text(
-            '数据备份',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () => Get.find<MainShellController>().switchToHome(),
-              tooltip: '返回首页',
-              icon: const AppSvgIcon(AppIconAssets.backupHome, size: 24),
-            ),
-          ],
+    return Scaffold(
+      backgroundColor: theme.appPageBackground,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Get.back<void>();
+            } else {
+              Get.find<MainShellController>().switchToSettings();
+            }
+          },
+          tooltip: '返回',
+          icon: const Icon(Icons.arrow_back),
         ),
-        body: SafeArea(
-          top: false,
-          child: GetBuilder<BackupManagementLogic>(
-            id: BackupManagementLogic.exportUpdateId,
-            builder: (management) => GetBuilder<BackupManagementLogic>(
-              id: BackupManagementLogic.historyUpdateId,
-              builder: (history) => GetBuilder<BackupImportLogic>(
-                id: BackupImportLogic.stateUpdateId,
-                builder: (importLogic) => _BackupBody(
-                  exportState: management.exportState,
-                  historyState: history.historyState,
-                  importState: importLogic.state,
-                  onExport: management.exportAndShare,
-                  onResetExport: management.resetExport,
-                  onLoadHistory: management.loadHistory,
-                  onPickImport: importLogic.pickAndPreview,
-                  onConfirmImport: importLogic.confirm,
-                  onRetryImport: importLogic.retry,
-                  onCancelImport: importLogic.cancel,
-                ),
+        title: const Text('数据备份'),
+        actions: [
+          IconButton(
+            onPressed: () => Get.find<MainShellController>().switchToHome(),
+            tooltip: '返回首页',
+            icon: const Icon(Icons.home_outlined),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: GetBuilder<BackupManagementLogic>(
+          id: BackupManagementLogic.exportUpdateId,
+          builder: (management) => GetBuilder<BackupManagementLogic>(
+            id: BackupManagementLogic.historyUpdateId,
+            builder: (history) => GetBuilder<BackupImportLogic>(
+              id: BackupImportLogic.stateUpdateId,
+              builder: (importLogic) => _BackupBody(
+                exportState: management.exportState,
+                historyState: history.historyState,
+                importState: importLogic.state,
+                onExport: management.exportAndShare,
+                onResetExport: management.resetExport,
+                onLoadHistory: management.loadHistory,
+                onDeleteHistory: management.deleteHistoryRecord,
+                onPickImport: importLogic.pickAndPreview,
+                onConfirmImport: importLogic.confirm,
+                onRetryImport: importLogic.retry,
+                onCancelImport: importLogic.cancel,
               ),
             ),
           ),
@@ -90,6 +79,7 @@ final class _BackupBody extends StatelessWidget {
     required this.onExport,
     required this.onResetExport,
     required this.onLoadHistory,
+    required this.onDeleteHistory,
     required this.onPickImport,
     required this.onConfirmImport,
     required this.onRetryImport,
@@ -102,6 +92,7 @@ final class _BackupBody extends StatelessWidget {
   final Future<void> Function() onExport;
   final VoidCallback onResetExport;
   final Future<void> Function() onLoadHistory;
+  final Future<void> Function(String recordId) onDeleteHistory;
   final Future<void> Function() onPickImport;
   final Future<void> Function(BackupImportMode mode) onConfirmImport;
   final Future<void> Function() onRetryImport;
@@ -146,7 +137,11 @@ final class _BackupBody extends StatelessWidget {
           const SizedBox(height: 18),
           const _ImportWarning(),
           const SizedBox(height: 28),
-          _HistorySection(state: historyState, onRetry: onLoadHistory),
+          _HistorySection(
+            state: historyState,
+            onRetry: onLoadHistory,
+            onDelete: onDeleteHistory,
+          ),
         ],
       ),
     );
@@ -497,10 +492,15 @@ final class _ImportCompleted extends StatelessWidget {
 }
 
 final class _HistorySection extends StatelessWidget {
-  const _HistorySection({required this.state, required this.onRetry});
+  const _HistorySection({
+    required this.state,
+    required this.onRetry,
+    required this.onDelete,
+  });
 
   final BackupHistoryRunState state;
   final Future<void> Function() onRetry;
+  final Future<void> Function(String recordId) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -527,7 +527,17 @@ final class _HistorySection extends StatelessWidget {
             _ => Column(
               children: [
                 for (var index = 0; index < state.records.length; index++) ...[
-                  _HistoryRow(record: state.records[index]),
+                  _HistoryRow(
+                    record: state.records[index],
+                    isDeleting:
+                        state.deletingRecordId == state.records[index].id,
+                    canDelete: state.deletingRecordId == null,
+                    showDeleteError:
+                        state.errorCode ==
+                            BackupHistoryErrorCodes.deleteFailed &&
+                        state.errorRecordId == state.records[index].id,
+                    onDelete: onDelete,
+                  ),
                   if (index != state.records.length - 1)
                     const Divider(height: 1),
                 ],
@@ -541,9 +551,19 @@ final class _HistorySection extends StatelessWidget {
 }
 
 final class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({required this.record});
+  const _HistoryRow({
+    required this.record,
+    required this.isDeleting,
+    required this.canDelete,
+    required this.showDeleteError,
+    required this.onDelete,
+  });
 
   final BackupHistoryRecord record;
+  final bool isDeleting;
+  final bool canDelete;
+  final bool showDeleteError;
+  final Future<void> Function(String recordId) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -555,45 +575,96 @@ final class _HistoryRow extends StatelessWidget {
       _ => record.type,
     };
     final time = record.occurredAt.toLocal();
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: record.result == 'success'
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).appError,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(type, style: Theme.of(context).textTheme.bodyMedium),
-                Text(
-                  '${time.year}/${_two(time.month)}/${_two(time.day)} · '
-                  '${record.fileName}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).appTextSecondary,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: record.result == 'success'
+                        ? theme.colorScheme.primary
+                        : theme.appError,
+                    shape: BoxShape.circle,
                   ),
                 ),
-              ],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(type, style: theme.textTheme.bodyMedium),
+                    Text(
+                      '${time.year}/${_two(time.month)}/${_two(time.day)} · '
+                      '${record.fileName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.appTextSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                key: ValueKey('backup-history-delete-${record.id}'),
+                onPressed: canDelete ? () => _confirmDelete(context) : null,
+                tooltip: isDeleting ? '正在删除备份记录' : '删除备份记录',
+                icon: isDeleting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.delete_outline),
+              ),
+            ],
+          ),
+          if (showDeleteError)
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 2),
+              child: Text(
+                '删除失败，请重试。',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.appError,
+                ),
+              ),
             ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('删除备份记录？'),
+        content: const Text('仅删除此历史记录，不会删除已保存或已分享的备份文件。'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('删除'),
           ),
         ],
       ),
     );
+    if (confirmed == true && context.mounted) {
+      await onDelete(record.id);
+    }
   }
 }
 

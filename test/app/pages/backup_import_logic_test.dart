@@ -214,6 +214,11 @@ final class _FakeRepository implements BackupRepository {
   }
 
   @override
+  Future<void> deleteHistoryRecord(String id) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<BackupImportReport> importBackup(
     List<int> bytes, {
     required BackupImportMode mode,

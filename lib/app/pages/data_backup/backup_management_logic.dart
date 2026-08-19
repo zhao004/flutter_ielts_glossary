@@ -42,6 +42,7 @@ final class BackupManagementLogic extends GetxController {
   int _exportToken = 0;
   int _historyToken = 0;
   Future<void>? _historyTask;
+  Future<void>? _historyDeletionTask;
 
   @override
   void onInit() {
@@ -56,6 +57,10 @@ final class BackupManagementLogic extends GetxController {
     if (_closed) {
       return Future<void>.value();
     }
+    final deletion = _historyDeletionTask;
+    if (deletion != null) {
+      return deletion.then((_) => loadHistory());
+    }
     final active = _historyTask;
     if (active != null) {
       return active;
@@ -69,6 +74,31 @@ final class BackupManagementLogic extends GetxController {
         }
       }),
     );
+    return task;
+  }
+
+  /// 删除当前列表中的单条历史记录；文件本体和其他用户数据不受影响。
+  Future<void> deleteHistoryRecord(String recordId) {
+    if (_closed) {
+      throw StateError('备份管理 Logic 已关闭');
+    }
+    final normalizedId = recordId.trim();
+    if (normalizedId.isEmpty || normalizedId.length > 64) {
+      throw ArgumentError.value(recordId, 'recordId', '备份历史 ID 长度必须在 1-64 之间');
+    }
+    final activeDeletion = _historyDeletionTask;
+    if (activeDeletion != null) {
+      return activeDeletion;
+    }
+    final activeLoad = _historyTask;
+    if (activeLoad != null) {
+      return activeLoad.then((_) => deleteHistoryRecord(normalizedId));
+    }
+    if (!_historyState.records.any((record) => record.id == normalizedId)) {
+      return Future<void>.value();
+    }
+    final task = _performHistoryDeletion(normalizedId);
+    _historyDeletionTask = task;
     return task;
   }
 
@@ -151,6 +181,7 @@ final class BackupManagementLogic extends GetxController {
       _historyState.copyWith(
         phase: BackupHistoryPhase.loading,
         errorCode: null,
+        errorRecordId: null,
       ),
     );
     try {
@@ -165,6 +196,7 @@ final class BackupManagementLogic extends GetxController {
               : BackupHistoryPhase.loaded,
           records: records,
           errorCode: null,
+          errorRecordId: null,
         ),
       );
     } on Exception {
@@ -173,9 +205,53 @@ final class BackupManagementLogic extends GetxController {
           _historyState.copyWith(
             phase: BackupHistoryPhase.error,
             errorCode: BackupHistoryErrorCodes.loadFailed,
+            errorRecordId: null,
           ),
         );
       }
+    }
+  }
+
+  Future<void> _performHistoryDeletion(String recordId) async {
+    final operationToken = ++_historyToken;
+    _replaceHistory(
+      _historyState.copyWith(
+        deletingRecordId: recordId,
+        errorCode: null,
+        errorRecordId: null,
+      ),
+    );
+    try {
+      await backupRepository.deleteHistoryRecord(recordId);
+      if (!_isCurrentHistory(operationToken)) {
+        return;
+      }
+      final records = _historyState.records
+          .where((record) => record.id != recordId)
+          .toList(growable: false);
+      _replaceHistory(
+        _historyState.copyWith(
+          phase: records.isEmpty
+              ? BackupHistoryPhase.empty
+              : BackupHistoryPhase.loaded,
+          records: records,
+          errorCode: null,
+          deletingRecordId: null,
+          errorRecordId: null,
+        ),
+      );
+    } on Object {
+      if (_isCurrentHistory(operationToken)) {
+        _replaceHistory(
+          _historyState.copyWith(
+            deletingRecordId: null,
+            errorCode: BackupHistoryErrorCodes.deleteFailed,
+            errorRecordId: recordId,
+          ),
+        );
+      }
+    } finally {
+      _historyDeletionTask = null;
     }
   }
 

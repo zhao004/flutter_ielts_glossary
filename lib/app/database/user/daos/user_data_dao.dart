@@ -523,6 +523,14 @@ class UserDataDao extends DatabaseAccessor<UserDatabase>
     return query.get();
   }
 
+  /// 按稳定记录 ID 删除单条备份操作历史，不影响用户学习数据。
+  Future<int> deleteBackupHistoryById(String id) {
+    final normalizedId = _normalizeRecordId(id, 'backupHistoryId');
+    return (delete(
+      backupHistory,
+    )..where((row) => row.id.equals(normalizedId))).go();
+  }
+
   /// 统计指定事件类型的已完成数和正确数，时间下界按 UTC 包含计算。
   Future<ReviewOutcomeCounts> countReviewOutcomes({
     required String eventType,
