@@ -2,6 +2,13 @@
 
 基于 Flutter 的本地优先雅思词汇学习应用。词库内容、学习记录和核心练习流程均可在设备本地运行；只有配置可选的第三方语音服务时，才会发起网络请求。
 
+## 项目示例图
+
+<p align="center">
+  <img src="assets/screenshot/screen-01.jpg" alt="首页、词库和学习模式示例" width="49%">
+  <img src="assets/screenshot/screen-02.jpg" alt="翻卡、选择题、拼写练习、例句填空和详情示例" width="49%">
+</p>
+
 ## 项目概览
 
 应用将只读词库与可写的用户学习数据分离存储，围绕查词、学习、练习、复习和数据迁移组织学习流程。
@@ -149,6 +156,12 @@ dart run tool/verify_content_database.dart --directory assets/data
 ```bash
 dart run tool/build_content_database.dart --help
 ```
+
+## 相关链接
+
+- 社区：[Linux.do](https://linux.do/)
+- 数据来源：[Linux.do 话题 2707208](https://linux.do/t/topic/2707208)
+- 更多开源项目：[zhao04 的公开主题](https://linux.do/u/zhao04/activity/topics)
 
 ## 数据与隐私
 
